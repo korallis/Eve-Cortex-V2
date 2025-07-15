@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100;200;300;400;500;600;700;800&display=swap');
+
+:root {
+  /* Eve-Cortex Brand Colors */
+  --cortex-blue: #0066FF;
+  --cortex-blue-dark: #0052CC;
+  --cortex-blue-light: #3385FF;
+  
+  --neural-purple: #6B46C1;
+  --neural-purple-dark: #553C9A;
+  --neural-purple-light: #8B5CF6;
+  
+  --eve-gold: #FFB800;
+  --eve-gold-dark: #E6A600;
+  --eve-gold-light: #FFCC33;
+  
+  /* Dark Theme Colors */
+  --bg-primary: #0A0A0B;
+  --bg-secondary: #1A1A1C;
+  --bg-tertiary: #2A2A2E;
+  --bg-quaternary: #3A3A3E;
+  
+  --text-primary: #FFFFFF;
+  --text-secondary: #B3B3B3;
+  --text-muted: #666666;
+  
+  /* Status Colors */
+  --success: #10B981;
+  --success-light: #34D399;
+  --success-dark: #059669;
+  
+  --warning: #F59E0B;
+  --warning-light: #FBBF24;
+  --warning-dark: #D97706;
+  
+  --error: #EF4444;
+  --error-light: #F87171;
+  --error-dark: #DC2626;
+  
+  --info: #3B82F6;
+  --info-light: #60A5FA;
+  --info-dark: #2563EB;
+}
+
+@layer base {
+  * {
+    @apply border-gray-200 dark:border-gray-800;
+  }
+  
+  body {
+    @apply bg-dark-primary text-white;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-dark-secondary;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-dark-quaternary rounded-full;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-cortex-blue;
+  }
+  
+  /* Selection */
+  ::selection {
+    @apply bg-cortex-blue/30 text-white;
+  }
+  
+  /* Focus styles */
+  :focus-visible {
+    @apply outline-none ring-2 ring-cortex-blue ring-offset-2 ring-offset-dark-primary;
+  }
+}
+
+@layer components {
+  /* Button Components */
+  .btn-primary {
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-cortex-blue border border-transparent rounded-lg shadow-sm transition-all duration-200 hover:bg-cortex-blue-dark hover:shadow-cortex focus:outline-none focus:ring-2 focus:ring-cortex-blue focus:ring-offset-2 focus:ring-offset-dark-primary disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-cortex-blue bg-transparent border-2 border-cortex-blue rounded-lg transition-all duration-200 hover:bg-cortex-blue hover:text-white focus:outline-none focus:ring-2 focus:ring-cortex-blue focus:ring-offset-2 focus:ring-offset-dark-primary disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-ghost {
+    @apply inline-flex items-center justify-center px-6 py-3 text-sm font-semibold text-white bg-transparent border border-transparent rounded-lg transition-all duration-200 hover:bg-dark-secondary focus:outline-none focus:ring-2 focus:ring-cortex-blue focus:ring-offset-2 focus:ring-offset-dark-primary disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  /* Card Components */
+  .card {
+    @apply bg-dark-secondary border border-white/10 rounded-xl p-6 shadow-lg transition-all duration-300 hover:shadow-xl hover:border-cortex-blue/50;
+  }
+  
+  .card-hover {
+    @apply card hover:transform hover:-translate-y-1 hover:shadow-cortex;
+  }
+  
+  /* Input Components */
+  .input-primary {
+    @apply block w-full px-4 py-3 text-white bg-dark-tertiary border border-white/20 rounded-lg placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-cortex-blue focus:border-transparent transition-colors duration-200;
+  }
+  
+  /* Text Styles */
+  .text-gradient {
+    @apply bg-gradient-cortex bg-clip-text text-transparent;
+  }
+  
+  .text-neural-gradient {
+    @apply bg-gradient-neural bg-clip-text text-transparent;
+  }
+  
+  /* Layout Components */
+  .container-custom {
+    @apply container mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  
+  .section-padding {
+    @apply py-16 sm:py-20 lg:py-24;
+  }
+  
+  /* Animation Classes */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .animate-slide-up {
+    animation: slideUp 0.3s ease-out;
+  }
+  
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+  }
+  
+  /* Glow Effects */
+  .glow-cortex {
+    @apply shadow-glow;
+  }
+  
+  .glow-inner {
+    @apply shadow-inner-glow;
+  }
+  
+  /* Loading States */
+  .loading-skeleton {
+    @apply animate-pulse bg-dark-tertiary rounded;
+  }
+  
+  .loading-spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-cortex-blue;
+  }
+}
+
+@layer utilities {
+  /* Custom utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+  
+  /* Responsive text sizes */
+  .text-responsive-xs {
+    @apply text-xs sm:text-sm;
+  }
+  
+  .text-responsive-sm {
+    @apply text-sm sm:text-base;
+  }
+  
+  .text-responsive-base {
+    @apply text-base sm:text-lg;
+  }
+  
+  .text-responsive-lg {
+    @apply text-lg sm:text-xl;
+  }
+  
+  .text-responsive-xl {
+    @apply text-xl sm:text-2xl;
+  }
+  
+  .text-responsive-2xl {
+    @apply text-2xl sm:text-3xl;
+  }
+  
+  .text-responsive-3xl {
+    @apply text-3xl sm:text-4xl;
+  }
+  
+  .text-responsive-4xl {
+    @apply text-4xl sm:text-5xl;
+  }
+  
+  .text-responsive-5xl {
+    @apply text-5xl sm:text-6xl;
+  }
+}
+
+/* Print styles */
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  
+  body {
+    @apply text-black bg-white;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

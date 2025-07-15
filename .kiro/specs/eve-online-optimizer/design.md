@@ -2,7 +2,7 @@
 
 ## Overview
 
-The EVE Online Optimizer is a comprehensive web platform built with Next.js 15 that leverages the EVE Online ESI API to provide AI-powered optimization recommendations for players. The platform combines real-time game data with advanced algorithms to deliver personalized ship fitting recommendations, career guidance, and strategic optimization across all aspects of EVE Online gameplay.
+**Eve-Cortex** is a comprehensive web platform built with Next.js 15 that leverages the EVE Online ESI API to provide AI-powered optimization recommendations for players. The platform combines real-time game data with advanced algorithms to deliver personalized ship fitting recommendations, career guidance, and strategic optimization across all aspects of EVE Online gameplay.
 
 The system architecture follows a modern full-stack approach with server-side rendering, API route handlers, and a PostgreSQL database for persistent data storage. Redis is used for caching frequently accessed data and rate limiting ESI API calls. The platform integrates with EVE's Dogma system for accurate attribute calculations and provides real-time recommendations based on character skills, assets, and market conditions.
 
@@ -356,6 +356,88 @@ interface ErrorResponse {
 - **Performance Testing**: Artillery or k6 for load testing
 - **Security Testing**: OWASP ZAP for vulnerability scanning
 
+## Development Workflow and CI/CD
+
+### GitHub Workflow Strategy
+
+#### Branch Protection and PR Process
+- **Main Branch Protection**: All changes must go through pull requests
+- **Automated Testing**: PRs trigger comprehensive test suites
+- **Code Quality Checks**: ESLint, TypeScript compilation, and formatting checks
+- **Auto-merge**: PRs automatically merge when all checks pass
+- **Feature Branches**: Each task creates a feature branch with descriptive naming
+
+#### CI/CD Pipeline
+```yaml
+# .github/workflows/ci.yml
+name: CI/CD Pipeline
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run type-check
+      - run: npm run test
+      - run: npm run build
+      
+      - name: Auto-merge PR
+        if: github.event_name == 'pull_request' && github.actor == 'korallis'
+        uses: pascalgn/merge-action@v0.15.6
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          merge_method: squash
+```
+
+#### Quality Gates
+- **TypeScript Compilation**: Zero TypeScript errors
+- **Linting**: ESLint passes with zero errors
+- **Unit Tests**: 90%+ code coverage
+- **Integration Tests**: All API endpoints tested
+- **Build Success**: Next.js builds without errors
+- **Security Scan**: No high-severity vulnerabilities
+
+### Task Implementation Workflow
+Each implementation task will follow this pattern:
+1. **Create Feature Branch**: `git checkout -b feature/task-name`
+2. **Implement Changes**: Code the specific task requirements
+3. **Add Tests**: Unit and integration tests for new functionality
+4. **Update Documentation**: Update relevant docs and comments
+5. **Create Pull Request**: PR with descriptive title and task reference
+6. **Automated Checks**: CI pipeline runs all quality gates
+7. **Auto-merge**: PR merges automatically if all checks pass
+8. **Cleanup**: Feature branch is automatically deleted
+
 ## Performance Optimization
 
 ### Caching Strategy
@@ -404,4 +486,298 @@ interface ErrorResponse {
 - **Data Freshness**: Track ESI data synchronization success rates
 - **Recommendation Accuracy**: Measure user satisfaction with recommendations
 
-This design provides a robust foundation for building a comprehensive EVE Online optimization platform that can scale to handle thousands of users while providing accurate, real-time recommendations based on the latest game data and player preferences.
+## Brand Guidelines and Visual Identity
+
+### Brand Overview
+
+**Eve-Cortex** represents the fusion of advanced AI intelligence with EVE Online's complex universe. The brand embodies precision, intelligence, and technological superiority - core values that resonate with EVE Online's strategic gameplay.
+
+#### Brand Positioning
+- **Primary**: AI-powered optimization platform for EVE Online
+- **Secondary**: Strategic advantage through intelligent analysis
+- **Tertiary**: Community-driven excellence in spaceship mastery
+
+#### Brand Personality
+- **Intelligent**: Advanced algorithms and data-driven insights
+- **Precise**: Accurate calculations and reliable recommendations
+- **Strategic**: Long-term planning and tactical advantage
+- **Professional**: Clean, modern, and trustworthy interface
+- **Innovative**: Cutting-edge technology meets gaming expertise
+
+### Visual Identity
+
+#### Logo Design Concept
+The Eve-Cortex logo combines neural network imagery with space-age aesthetics:
+
+```
+Primary Logo (SVG):
+- Central hexagonal core representing the "Cortex"
+- Interconnected nodes suggesting neural pathways
+- Subtle circuit board patterns
+- Clean, geometric typography
+- Scalable from 16px to large format
+```
+
+#### Logo Variations
+1. **Primary Logo**: Full logo with text and icon
+2. **Icon Only**: Hexagonal cortex symbol for favicons/small spaces
+3. **Horizontal**: Logo and text arranged horizontally
+4. **Stacked**: Logo above text for square formats
+5. **Monochrome**: Single color versions for various backgrounds
+
+#### Color Palette
+
+**Primary Colors:**
+```css
+/* Cortex Blue - Primary brand color */
+--cortex-blue: #0066FF;
+--cortex-blue-dark: #0052CC;
+--cortex-blue-light: #3385FF;
+
+/* Neural Purple - Secondary accent */
+--neural-purple: #6B46C1;
+--neural-purple-dark: #553C9A;
+--neural-purple-light: #8B5CF6;
+
+/* EVE Gold - Accent color inspired by EVE Online */
+--eve-gold: #FFB800;
+--eve-gold-dark: #E6A600;
+--eve-gold-light: #FFCC33;
+```
+
+**Neutral Colors:**
+```css
+/* Dark Theme (Primary) */
+--bg-primary: #0A0A0B;
+--bg-secondary: #1A1A1C;
+--bg-tertiary: #2A2A2E;
+--text-primary: #FFFFFF;
+--text-secondary: #B3B3B3;
+--text-muted: #666666;
+
+/* Light Theme (Alternative) */
+--bg-light-primary: #FFFFFF;
+--bg-light-secondary: #F8F9FA;
+--bg-light-tertiary: #E9ECEF;
+--text-light-primary: #212529;
+--text-light-secondary: #495057;
+--text-light-muted: #6C757D;
+```
+
+**Status Colors:**
+```css
+/* Success/Positive */
+--success: #10B981;
+--success-light: #34D399;
+--success-dark: #059669;
+
+/* Warning/Caution */
+--warning: #F59E0B;
+--warning-light: #FBBF24;
+--warning-dark: #D97706;
+
+/* Error/Danger */
+--error: #EF4444;
+--error-light: #F87171;
+--error-dark: #DC2626;
+
+/* Info/Neutral */
+--info: #3B82F6;
+--info-light: #60A5FA;
+--info-dark: #2563EB;
+```
+
+#### Typography
+
+**Primary Font Stack:**
+```css
+/* Headings - Modern, tech-inspired */
+font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+
+/* Body Text - Highly readable */
+font-family: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+
+/* Monospace - Code and data */
+font-family: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
+```
+
+**Typography Scale:**
+```css
+/* Headings */
+--text-6xl: 3.75rem;  /* 60px - Hero titles */
+--text-5xl: 3rem;     /* 48px - Page titles */
+--text-4xl: 2.25rem;  /* 36px - Section headers */
+--text-3xl: 1.875rem; /* 30px - Subsection headers */
+--text-2xl: 1.5rem;   /* 24px - Card titles */
+--text-xl: 1.25rem;   /* 20px - Large text */
+
+/* Body Text */
+--text-lg: 1.125rem;  /* 18px - Large body */
+--text-base: 1rem;    /* 16px - Default body */
+--text-sm: 0.875rem;  /* 14px - Small text */
+--text-xs: 0.75rem;   /* 12px - Captions */
+```
+
+#### Iconography
+
+**Icon Style Guidelines:**
+- **Style**: Outline icons with 2px stroke weight
+- **Corner Radius**: 2px for consistency
+- **Grid**: 24x24px base grid system
+- **Variants**: 16px, 20px, 24px, 32px, 48px sizes
+- **Theme**: Tech/space inspired with neural network elements
+
+**Custom Icon Set:**
+```
+Core Icons:
+- cortex-brain: Neural network brain
+- ship-optimizer: Spaceship with optimization arrows
+- skill-tree: Branching skill progression
+- market-analysis: Chart with trend lines
+- fitting-tool: Wrench with circuit pattern
+- character-profile: Pilot helmet silhouette
+- recommendation-ai: Robot head with lightbulb
+- performance-metrics: Dashboard with gauges
+```
+
+#### UI Components Style Guide
+
+**Buttons:**
+```css
+/* Primary Button */
+.btn-primary {
+  background: var(--cortex-blue);
+  color: white;
+  border-radius: 8px;
+  padding: 12px 24px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: var(--cortex-blue-dark);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 102, 255, 0.3);
+}
+
+/* Secondary Button */
+.btn-secondary {
+  background: transparent;
+  color: var(--cortex-blue);
+  border: 2px solid var(--cortex-blue);
+  border-radius: 8px;
+  padding: 10px 22px;
+  font-weight: 600;
+}
+```
+
+**Cards:**
+```css
+.card {
+  background: var(--bg-secondary);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  border-color: var(--cortex-blue);
+}
+```
+
+**Data Visualization:**
+```css
+/* Chart colors for consistent data representation */
+--chart-primary: var(--cortex-blue);
+--chart-secondary: var(--neural-purple);
+--chart-accent: var(--eve-gold);
+--chart-success: var(--success);
+--chart-warning: var(--warning);
+--chart-error: var(--error);
+
+/* Gradient overlays for depth */
+--gradient-primary: linear-gradient(135deg, var(--cortex-blue), var(--neural-purple));
+--gradient-secondary: linear-gradient(135deg, var(--neural-purple), var(--eve-gold));
+```
+
+### Brand Assets Structure
+
+```
+/public/brand/
+├── logos/
+│   ├── eve-cortex-logo.svg          # Primary logo
+│   ├── eve-cortex-icon.svg          # Icon only
+│   ├── eve-cortex-horizontal.svg    # Horizontal layout
+│   ├── eve-cortex-stacked.svg       # Stacked layout
+│   ├── eve-cortex-mono-white.svg    # White monochrome
+│   ├── eve-cortex-mono-black.svg    # Black monochrome
+│   └── favicon/
+│       ├── favicon.ico
+│       ├── favicon-16x16.png
+│       ├── favicon-32x32.png
+│       ├── apple-touch-icon.png
+│       └── android-chrome-192x192.png
+├── icons/
+│   ├── cortex-brain.svg
+│   ├── ship-optimizer.svg
+│   ├── skill-tree.svg
+│   ├── market-analysis.svg
+│   ├── fitting-tool.svg
+│   ├── character-profile.svg
+│   ├── recommendation-ai.svg
+│   └── performance-metrics.svg
+├── backgrounds/
+│   ├── hero-gradient.svg
+│   ├── neural-pattern.svg
+│   └── space-texture.jpg
+└── social/
+    ├── og-image.png                 # 1200x630 Open Graph
+    ├── twitter-card.png             # 1200x600 Twitter Card
+    └── linkedin-banner.png          # 1584x396 LinkedIn
+```
+
+### Brand Voice and Messaging
+
+#### Tone of Voice
+- **Authoritative**: Confident in technical expertise
+- **Approachable**: Complex concepts explained simply
+- **Precise**: Accurate and specific language
+- **Forward-thinking**: Emphasis on optimization and improvement
+
+#### Key Messaging
+- **Primary**: "Optimize your EVE Online experience with AI-powered intelligence"
+- **Secondary**: "Strategic advantage through data-driven insights"
+- **Call-to-Action**: "Unlock your potential" / "Optimize now" / "Gain the edge"
+
+#### Content Guidelines
+- Use active voice and present tense
+- Emphasize benefits over features
+- Include specific metrics and improvements
+- Maintain professional yet accessible tone
+- Reference EVE Online terminology appropriately
+
+### Implementation Guidelines
+
+#### Logo Usage
+- **Minimum Size**: 24px height for digital, 0.5 inches for print
+- **Clear Space**: Minimum 1x logo height on all sides
+- **Backgrounds**: Ensure sufficient contrast (4.5:1 minimum)
+- **Prohibited**: No stretching, rotating, or color modifications
+
+#### Color Usage
+- **Primary**: Cortex Blue for main actions and branding
+- **Secondary**: Neural Purple for accents and highlights
+- **Accent**: EVE Gold sparingly for special emphasis
+- **Backgrounds**: Dark theme preferred, light theme for accessibility
+
+#### Accessibility Standards
+- **WCAG 2.1 AA Compliance**: All color combinations meet contrast requirements
+- **Color Blindness**: Icons and UI don't rely solely on color
+- **Screen Readers**: Proper alt text and ARIA labels
+- **Keyboard Navigation**: Full keyboard accessibility
+
+This comprehensive brand system ensures Eve-Cortex maintains a consistent, professional, and recognizable identity across all touchpoints while reflecting the sophisticated nature of EVE Online optimization.

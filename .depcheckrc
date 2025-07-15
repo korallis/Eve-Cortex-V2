@@ -1,0 +1,20 @@
+{
+  "ignores": [
+    "@types/*",
+    "eslint-config-*",
+    "prettier-plugin-*",
+    "husky",
+    "lint-staged",
+    "@testing-library/*",
+    "jest-environment-*"
+  ],
+  "skip-missing": false,
+  "ignore-bin-package": false,
+  "ignore-matches": [
+    "*.test.*",
+    "*.spec.*",
+    "*.stories.*",
+    "jest.config.*",
+    "jest.setup.*"
+  ]
+}
