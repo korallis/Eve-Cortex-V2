@@ -30,31 +30,29 @@ export function StatsSection() {
   return (
     <section className="section-padding bg-gradient-to-br from-dark-primary to-dark-secondary">
       <Container>
-        <div className="text-center mb-16">
+        <div className="mb-16 text-center">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
-            className="text-3xl sm:text-4xl font-bold mb-4"
+            className="mb-4 text-3xl font-bold sm:text-4xl"
           >
-            Trusted by{' '}
-            <span className="text-neural-gradient">Thousands</span>{' '}
-            of Pilots
+            Trusted by <span className="text-neural-gradient">Thousands</span> of Pilots
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
-            className="text-xl text-gray-300 max-w-2xl mx-auto"
+            className="mx-auto max-w-2xl text-xl text-gray-300"
           >
-            Join the growing community of pilots who have gained the competitive edge 
-            with Eve-Cortex's advanced optimization tools.
+            Join the growing community of pilots who have gained the competitive edge with
+            Eve-Cortex's advanced optimization tools.
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map((stat, index) => (
             <motion.div
               key={stat.label}
@@ -62,7 +60,7 @@ export function StatsSection() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
-              className="text-center group"
+              className="group text-center"
             >
               <div className="relative">
                 <motion.div
@@ -70,18 +68,16 @@ export function StatsSection() {
                   whileInView={{ scale: 1 }}
                   transition={{ duration: 0.6, delay: index * 0.1 + 0.2 }}
                   viewport={{ once: true }}
-                  className="text-4xl sm:text-5xl font-bold text-cortex-blue mb-2 group-hover:text-neural-purple transition-colors duration-300"
+                  className="mb-2 text-4xl font-bold text-cortex-blue transition-colors duration-300 group-hover:text-neural-purple sm:text-5xl"
                 >
                   {stat.value}
                 </motion.div>
-                <div className="absolute inset-0 bg-cortex-blue/20 rounded-full blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute inset-0 rounded-full bg-cortex-blue/20 opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-100" />
               </div>
-              <h3 className="text-lg font-semibold mb-2 text-white group-hover:text-cortex-blue transition-colors duration-300">
+              <h3 className="mb-2 text-lg font-semibold text-white transition-colors duration-300 group-hover:text-cortex-blue">
                 {stat.label}
               </h3>
-              <p className="text-gray-400 text-sm leading-relaxed">
-                {stat.description}
-              </p>
+              <p className="text-sm leading-relaxed text-gray-400">{stat.description}</p>
             </motion.div>
           ))}
         </div>

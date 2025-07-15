@@ -15,17 +15,9 @@ const containerSizes = {
   full: 'max-w-full',
 }
 
-export function Container({ 
-  children, 
-  className, 
-  size = 'lg' 
-}: ContainerProps) {
+export function Container({ children, className, size = 'lg' }: ContainerProps) {
   return (
-    <div className={cn(
-      'mx-auto px-4 sm:px-6 lg:px-8',
-      containerSizes[size],
-      className
-    )}>
+    <div className={cn('mx-auto px-4 sm:px-6 lg:px-8', containerSizes[size], className)}>
       {children}
     </div>
   )

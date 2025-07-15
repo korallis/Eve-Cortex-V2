@@ -4,7 +4,7 @@ import './globals.css'
 import { Providers } from '@/components/providers'
 import { Toaster } from 'react-hot-toast'
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
@@ -13,10 +13,18 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: {
     default: 'Eve-Cortex | AI-Powered EVE Online Optimization',
-    template: '%s | Eve-Cortex'
+    template: '%s | Eve-Cortex',
   },
-  description: 'Optimize your EVE Online experience with AI-powered intelligence. Strategic advantage through data-driven insights.',
-  keywords: ['EVE Online', 'optimization', 'AI', 'ship fitting', 'skill planning', 'market analysis'],
+  description:
+    'Optimize your EVE Online experience with AI-powered intelligence. Strategic advantage through data-driven insights.',
+  keywords: [
+    'EVE Online',
+    'optimization',
+    'AI',
+    'ship fitting',
+    'skill planning',
+    'market analysis',
+  ],
   authors: [{ name: 'Eve-Cortex Team' }],
   creator: 'Eve-Cortex',
   publisher: 'Eve-Cortex',
@@ -31,7 +39,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: '/',
     title: 'Eve-Cortex | AI-Powered EVE Online Optimization',
-    description: 'Optimize your EVE Online experience with AI-powered intelligence. Strategic advantage through data-driven insights.',
+    description:
+      'Optimize your EVE Online experience with AI-powered intelligence. Strategic advantage through data-driven insights.',
     siteName: 'Eve-Cortex',
     images: [
       {
@@ -65,11 +74,7 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={inter.variable} suppressHydrationWarning>
       <body className="min-h-screen bg-dark-primary text-white antialiased">

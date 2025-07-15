@@ -5,6 +5,9 @@ on:
     branches: [main]
   push:
     branches: [main]
+  schedule:
+    # Run weekly dependency checks every Monday at 9 AM UTC
+    - cron: '0 9 * * 1'
 
 jobs:
   # Security and Dependency Audit
@@ -172,6 +175,22 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Test database migrations
+        run: |
+          echo "🗃️ Testing database migrations..."
+          npm run db:migrate
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/eve_cortex_test
+          NODE_ENV: test
+
+      - name: Test database seeding
+        run: |
+          echo "🌱 Testing database seeding..."
+          npm run db:seed
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/eve_cortex_test
+          NODE_ENV: test
+
       - name: Run tests
         run: |
           echo "🧪 Running tests..."
@@ -225,12 +244,12 @@ jobs:
             echo "❌ Build output directory not found!"
             exit 1
           fi
-          
+
           if [ ! -f ".next/BUILD_ID" ]; then
             echo "❌ Build ID file not found!"
             exit 1
           fi
-          
+
           echo "✅ Build completed successfully!"
 
   # License and Legal Compliance
@@ -277,27 +296,90 @@ jobs:
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check PR approval status
+        id: approval
+        run: |
+          echo "🔍 Checking PR approval status..."
+          APPROVALS=$(gh pr view ${{ github.event.pull_request.number }} --json reviews --jq '[.reviews[] | select(.state == "APPROVED")] | length')
+          echo "Approvals: $APPROVALS"
+
+          # For dependabot PRs, we don't require manual approval
+          if [[ "${{ github.actor }}" == "dependabot[bot]" ]]; then
+            echo "🤖 Dependabot PR - auto-approval enabled"
+            echo "approved=true" >> $GITHUB_OUTPUT
+          elif [[ "$APPROVALS" -gt 0 ]] || [[ "${{ github.actor }}" == "korallis" ]]; then
+            echo "✅ PR has required approvals"
+            echo "approved=true" >> $GITHUB_OUTPUT
+          else
+            echo "❌ PR requires approval before auto-merge"
+            echo "approved=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Enable auto-merge
+        if: steps.approval.outputs.approved == 'true'
         run: |
           echo "🤖 Enabling auto-merge for PR #${{ github.event.pull_request.number }}"
-          gh pr merge ${{ github.event.pull_request.number }} --auto --squash
+          gh pr merge ${{ github.event.pull_request.number }} --auto --squash --delete-branch
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Add success comment
-        if: success()
+        if: steps.approval.outputs.approved == 'true'
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "
-          ## ✅ All Checks Passed!
-          
+          ## ✅ All Quality Gates Passed!
+
+          ### Security & Dependencies
           - 🔒 Security audit: **PASSED**
-          - 📦 Dependency check: **PASSED**  
+          - 📦 Dependency check: **PASSED**
+          - 📄 License compliance: **PASSED**
+
+          ### Code Quality
+          - 🧹 ESLint: **PASSED**
+          - 🎨 Prettier: **PASSED**
+          - 🔧 TypeScript: **PASSED**
+
+          ### Testing & Build
+          - 🗃️ Database migrations: **PASSED**
+          - 🌱 Database seeding: **PASSED**
+          - 🧪 Unit tests: **PASSED**
+          - 🏗️ Build: **PASSED**
+
+          ### Auto-merge Status
+          - ✅ All checks passed
+          - ✅ Required approvals: ${{ github.actor == 'dependabot[bot]' && 'Not required (Dependabot)' || 'Satisfied' }}
+          - 🤖 **Auto-merge enabled** - This PR will be merged automatically
+
+          ---
+          *Quality gates enforced by CI/CD pipeline*
+          "
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add approval required comment
+        if: steps.approval.outputs.approved == 'false'
+        run: |
+          gh pr comment ${{ github.event.pull_request.number }} --body "
+          ## ⏳ Approval Required
+
+          All automated checks have passed, but this PR requires manual approval before auto-merge can proceed.
+
+          ### ✅ Completed Checks
+          - 🔒 Security audit: **PASSED**
+          - 📦 Dependency check: **PASSED**
           - 🧹 Code quality: **PASSED**
           - 🧪 Tests: **PASSED**
           - 🏗️ Build: **PASSED**
           - 📄 License check: **PASSED**
-          
-          This PR will be automatically merged.
+
+          ### 👥 Next Steps
+          - A maintainer needs to review and approve this PR
+          - Once approved, auto-merge will be enabled automatically
+
+          ---
+          *Waiting for manual approval to proceed with auto-merge*
           "
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -306,17 +388,21 @@ jobs:
         if: failure()
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "
-          ## ❌ Checks Failed!
-          
-          This PR cannot be auto-merged due to failing checks. Please review the workflow logs and fix the issues.
-          
-          Common issues:
-          - Security vulnerabilities in dependencies
-          - Deprecated packages
-          - Code quality issues
-          - Test failures
-          - Build errors
-          - License compliance issues
+          ## ❌ Auto-merge Failed!
+
+          There was an issue enabling auto-merge for this PR. Please check the workflow logs for details.
+
+          ### Possible Issues
+          - GitHub API rate limiting
+          - Insufficient permissions
+          - Branch protection rule conflicts
+          - Network connectivity issues
+
+          ### Manual Resolution
+          You can manually merge this PR since all quality gates have passed.
+
+          ---
+          *Auto-merge workflow encountered an error*
           "
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -340,7 +426,7 @@ jobs:
         run: |
           echo "🔍 Checking for dependency updates..."
           npx npm-check-updates --doctor --upgrade
-          
+
           if git diff --quiet package.json; then
             echo "✅ All dependencies are up to date!"
           else
@@ -358,8 +444,3 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-# Schedule weekly dependency checks
-on:
-  schedule:
-    - cron: '0 9 * * 1' # Every Monday at 9 AM UTC

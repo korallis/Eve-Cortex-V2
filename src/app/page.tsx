@@ -6,7 +6,8 @@ import { CTASection } from '@/components/sections/cta-section'
 
 export const metadata: Metadata = {
   title: 'Eve-Cortex | AI-Powered EVE Online Optimization',
-  description: 'Optimize your EVE Online experience with AI-powered intelligence. Get personalized ship fittings, skill plans, and strategic recommendations.',
+  description:
+    'Optimize your EVE Online experience with AI-powered intelligence. Get personalized ship fittings, skill plans, and strategic recommendations.',
 }
 
 export default function HomePage() {

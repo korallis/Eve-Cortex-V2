@@ -20,7 +20,14 @@
     "audit:deps": "npx check-outdated",
     "deps:check": "npx npm-check-updates --doctor",
     "deps:update": "npx npm-check-updates -u",
-    "security:check": "npm audit && npx better-npm-audit audit"
+    "security:check": "npm audit && npx better-npm-audit audit",
+    "github:setup-protection": "node scripts/setup-branch-protection.js setup",
+    "github:protection-status": "node scripts/setup-branch-protection.js status",
+    "ci:quality": "npm run lint && npm run type-check && npm run format:check",
+    "ci:test": "npm run test:coverage",
+    "ci:build": "npm run build",
+    "ci:security": "npm run audit:security",
+    "ci:full": "npm run ci:quality && npm run ci:security && npm run ci:test && npm run ci:build"
   },
   "dependencies": {
     "next": "^15.4.1",

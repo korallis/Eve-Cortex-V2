@@ -6,12 +6,23 @@ Eve-Cortex is a comprehensive web platform that leverages the EVE Online ESI API
 
 ## 🚀 Features
 
+### Core Optimization Features
+
 - **AI-Powered Ship Fitting**: Personalized ship fittings optimized for your character's skills and implants
 - **Intelligent Skill Planning**: Optimal skill training queues based on your career goals
 - **Market Analysis**: Real-time market data analysis and profit opportunity identification
 - **Mission Optimization**: Enemy analysis and optimal fittings for specific mission types
 - **ESI Integration**: Seamless integration with EVE Online's official API
 - **Real-time Updates**: Live character data synchronization and market monitoring
+
+### Brand & Design System
+
+- **Comprehensive Brand Identity**: Complete visual identity system with Eve-Cortex branding
+- **Interactive Brand Showcase**: Live demonstration of design system components and guidelines
+- **Custom Color Palette**: Cortex Blue (#0066FF), Neural Purple (#6B46C1), EVE Gold (#FFB800)
+- **Typography System**: Inter font family with responsive scaling
+- **Custom Icon Set**: Purpose-built icons for EVE Online optimization features
+- **Dark Theme Design**: Optimized for extended gaming sessions
 
 ## 🛠️ Tech Stack
 
@@ -27,22 +38,48 @@ Eve-Cortex is a comprehensive web platform that leverages the EVE Online ESI API
 ## 🏗️ Project Structure
 
 ```
-src/
-├── app/                    # Next.js App Router pages
-├── components/             # React components
-│   ├── sections/          # Landing page sections
-│   └── ui/                # Reusable UI components
-├── lib/                   # Utility functions and configurations
-├── types/                 # TypeScript type definitions
-├── hooks/                 # Custom React hooks
-└── styles/                # Global styles and themes
+eve-cortex/
+├── .github/workflows/      # CI/CD pipeline configurations
+├── .husky/                # Git hooks (pre-commit)
+├── .kiro/                 # Kiro IDE configurations
+│   ├── settings/          # IDE settings
+│   ├── specs/            # Feature specifications
+│   └── steering/         # AI assistant guidance rules
+├── src/                   # Source code
+│   ├── app/              # Next.js App Router pages
+│   │   ├── brand/        # Brand showcase page
+│   │   ├── globals.css   # Global styles with custom theme
+│   │   ├── layout.tsx    # Root layout
+│   │   └── page.tsx      # Home page
+│   ├── components/       # React components
+│   │   ├── brand-showcase.tsx  # Interactive brand system demo
+│   │   ├── sections/     # Landing page sections
+│   │   │   ├── hero-section.tsx
+│   │   │   ├── features-section.tsx
+│   │   │   ├── cta-section.tsx
+│   │   │   └── stats-section.tsx
+│   │   └── ui/           # Reusable UI components
+│   │       ├── button.tsx
+│   │       └── container.tsx
+│   ├── lib/              # Utility functions and configurations
+│   │   └── utils.ts      # Common utilities (cn, formatters)
+│   ├── types/            # TypeScript type definitions
+│   └── hooks/            # Custom React hooks
+├── public/               # Static assets
+│   └── brand/           # Brand assets
+│       ├── logos/       # Logo variations (SVG)
+│       ├── icons/       # Custom icons
+│       └── social/      # Social media assets
+├── tailwind.config.js    # Tailwind CSS with Eve-Cortex theme
+├── next.config.js        # Next.js configuration
+└── package.json          # Dependencies and scripts
 ```
 
 ## 🚦 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - PostgreSQL 15+
 - Redis 7+
 - EVE Online Developer Application (ESI credentials)
@@ -50,21 +87,24 @@ src/
 ### Installation
 
 1. **Clone the repository**
+
    ```bash
    git clone https://github.com/korallis/Eve-Cortex-V2.git
    cd Eve-Cortex-V2
    ```
 
 2. **Install dependencies**
+
    ```bash
    npm install
    ```
 
 3. **Set up environment variables**
+
    ```bash
    cp .env.example .env.local
    ```
-   
+
    Update `.env.local` with your configuration:
    - `EVE_CLIENT_ID`: Your EVE Online application client ID
    - `EVE_CLIENT_SECRET`: Your EVE Online application client secret
@@ -73,18 +113,33 @@ src/
    - `NEXTAUTH_SECRET`: Random secret for NextAuth.js
 
 4. **Set up the database**
+
    ```bash
    npm run db:migrate
    npm run db:seed
    ```
 
 5. **Start the development server**
+
    ```bash
    npm run dev
    ```
 
 6. **Open your browser**
    Navigate to [http://localhost:3000](http://localhost:3000)
+
+### Brand Showcase
+
+To view the comprehensive brand system and design guidelines:
+
+1. Navigate to [http://localhost:3000/brand](http://localhost:3000/brand)
+2. Explore the interactive brand showcase featuring:
+   - Logo variations and usage guidelines
+   - Complete color palette with hex codes
+   - Typography system demonstration
+   - Custom icon set
+   - UI component examples
+   - Gradient and styling patterns
 
 ## 🧪 Testing
 
@@ -112,6 +167,11 @@ npm run test:coverage
 - **Run Migrations**: `npm run db:migrate`
 - **Seed Database**: `npm run db:seed`
 
+### GitHub Repository Management
+
+- **Setup Branch Protection**: `npm run github:setup-protection`
+- **Check Protection Status**: `npm run github:protection-status`
+
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
@@ -123,6 +183,7 @@ npm run test:coverage
 ### Manual Deployment
 
 1. Build the application:
+
    ```bash
    npm run build
    ```
@@ -173,4 +234,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-**Eve-Cortex** - *Optimize your EVE Online experience with AI-powered intelligence.*
+**Eve-Cortex** - _Optimize your EVE Online experience with AI-powered intelligence._

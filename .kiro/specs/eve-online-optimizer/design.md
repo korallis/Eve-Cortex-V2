@@ -16,29 +16,29 @@ graph TB
         WEB[Web Browser]
         MOBILE[Mobile Browser]
     end
-    
+
     subgraph "Next.js Application"
         PAGES[Pages/Components]
         API[API Routes]
         MIDDLEWARE[Middleware]
         AUTH[Authentication]
     end
-    
+
     subgraph "Data Layer"
         POSTGRES[(PostgreSQL)]
         REDIS[(Redis Cache)]
     end
-    
+
     subgraph "External APIs"
         ESI[EVE ESI API]
         SDE[Static Data Export]
     end
-    
+
     subgraph "AI/ML Services"
         OPTIMIZER[Optimization Engine]
         RECOMMENDER[Recommendation System]
     end
-    
+
     WEB --> PAGES
     MOBILE --> PAGES
     PAGES --> API
@@ -67,30 +67,35 @@ graph TB
 ### Core Components
 
 #### 1. Authentication System
+
 - **ESI OAuth Integration**: Handles EVE Online SSO authentication
 - **Session Management**: Secure session handling with JWT tokens
 - **Scope Management**: Manages ESI API scopes and permissions
 - **Token Refresh**: Automatic token refresh for long-lived sessions
 
 #### 2. Data Synchronization Engine
+
 - **Character Data Sync**: Fetches and updates character information
 - **Asset Management**: Tracks character assets and locations
 - **Skill Monitoring**: Real-time skill queue and training progress
 - **Market Data Integration**: Current market prices and trends
 
 #### 3. Optimization Engine
+
 - **Dogma Calculator**: Accurate attribute calculations using EVE's Dogma system
 - **Fit Optimizer**: Generates optimal ship fittings based on constraints
 - **Skill Planner**: Creates efficient skill training plans
 - **Performance Analyzer**: Calculates ship performance metrics
 
 #### 4. Recommendation System
+
 - **Career Path Analysis**: Analyzes player goals and recommends paths
 - **Mission Optimizer**: Suggests optimal missions and fittings
 - **Market Opportunities**: Identifies profitable trading opportunities
 - **Planetary Interaction**: Optimizes PI setups and chains
 
 #### 5. User Interface Components
+
 - **Dashboard**: Overview of character status and recommendations
 - **Ship Fitting Tool**: Interactive fitting interface with real-time stats
 - **Skill Planner**: Visual skill training timeline and priorities
@@ -99,6 +104,7 @@ graph TB
 ### API Interfaces
 
 #### ESI Integration Layer
+
 ```typescript
 interface ESIClient {
   authenticate(scopes: string[]): Promise<AuthResult>
@@ -110,6 +116,7 @@ interface ESIClient {
 ```
 
 #### Optimization Service Interface
+
 ```typescript
 interface OptimizationService {
   calculateShipStats(fitting: Fitting, character: Character): Promise<ShipStats>
@@ -120,6 +127,7 @@ interface OptimizationService {
 ```
 
 #### Data Access Layer
+
 ```typescript
 interface DataRepository {
   saveCharacter(character: Character): Promise<void>
@@ -136,6 +144,7 @@ interface DataRepository {
 ### Core Data Models
 
 #### Character Model
+
 ```typescript
 interface Character {
   id: number
@@ -154,6 +163,7 @@ interface Character {
 ```
 
 #### Ship Fitting Model
+
 ```typescript
 interface Fitting {
   id: number
@@ -172,6 +182,7 @@ interface Fitting {
 ```
 
 #### Skill Plan Model
+
 ```typescript
 interface SkillPlan {
   id: number
@@ -188,6 +199,7 @@ interface SkillPlan {
 ```
 
 #### Market Data Model
+
 ```typescript
 interface MarketData {
   typeId: number
@@ -204,6 +216,7 @@ interface MarketData {
 ### Database Schema
 
 #### PostgreSQL Tables
+
 ```sql
 -- Characters table
 CREATE TABLE characters (
@@ -262,6 +275,7 @@ CREATE TABLE skill_plans (
 ```
 
 #### Redis Cache Structure
+
 ```
 # Character data cache (TTL: 1 hour)
 character:{eve_character_id} -> Character JSON
@@ -284,30 +298,35 @@ sde:{data_type}:{id} -> StaticData JSON
 ### Error Categories and Handling Strategy
 
 #### 1. ESI API Errors
+
 - **Rate Limiting**: Implement exponential backoff and queue management
 - **Authentication Errors**: Automatic token refresh with fallback to re-authentication
 - **Service Unavailable**: Graceful degradation with cached data
 - **Invalid Scopes**: Clear user messaging and scope re-authorization
 
 #### 2. Database Errors
+
 - **Connection Issues**: Connection pooling with retry logic
 - **Query Failures**: Transaction rollback and error logging
 - **Data Integrity**: Validation at application and database levels
 - **Migration Errors**: Automated rollback and notification systems
 
 #### 3. Optimization Engine Errors
+
 - **Invalid Constraints**: User-friendly error messages with suggestions
 - **Calculation Failures**: Fallback to simplified calculations
 - **Timeout Errors**: Progressive optimization with partial results
 - **Memory Issues**: Chunked processing for large datasets
 
 #### 4. User Interface Errors
+
 - **Network Failures**: Offline mode with cached data
 - **Validation Errors**: Real-time validation with clear feedback
 - **Loading States**: Progressive loading with skeleton screens
 - **Browser Compatibility**: Graceful degradation for older browsers
 
 ### Error Response Format
+
 ```typescript
 interface ErrorResponse {
   error: {
@@ -326,30 +345,35 @@ interface ErrorResponse {
 ### Testing Pyramid
 
 #### 1. Unit Tests
+
 - **Optimization Algorithms**: Test calculation accuracy and edge cases
 - **Data Models**: Validate serialization and business logic
 - **Utility Functions**: Test helper functions and transformations
 - **API Clients**: Mock external dependencies and test error handling
 
 #### 2. Integration Tests
+
 - **Database Operations**: Test CRUD operations and transactions
 - **ESI API Integration**: Test authentication and data fetching
 - **Cache Operations**: Test Redis operations and TTL behavior
 - **End-to-End Workflows**: Test complete user journeys
 
 #### 3. Performance Tests
+
 - **Load Testing**: Simulate concurrent users and API calls
 - **Database Performance**: Test query performance with large datasets
 - **Cache Efficiency**: Measure cache hit rates and performance impact
 - **Memory Usage**: Monitor memory consumption during optimization
 
 #### 4. Security Tests
+
 - **Authentication**: Test OAuth flow and session management
 - **Authorization**: Verify access controls and data isolation
 - **Input Validation**: Test against injection attacks and malformed data
 - **Rate Limiting**: Verify protection against abuse
 
 ### Testing Tools and Framework
+
 - **Unit Testing**: Jest with TypeScript support
 - **Integration Testing**: Supertest for API testing
 - **Database Testing**: Test containers with PostgreSQL
@@ -361,6 +385,7 @@ interface ErrorResponse {
 ### GitHub Workflow Strategy
 
 #### Branch Protection and PR Process
+
 - **Main Branch Protection**: All changes must go through pull requests
 - **Automated Testing**: PRs trigger comprehensive test suites
 - **Code Quality Checks**: ESLint, TypeScript compilation, and formatting checks
@@ -368,6 +393,7 @@ interface ErrorResponse {
 - **Feature Branches**: Each task creates a feature branch with descriptive naming
 
 #### CI/CD Pipeline
+
 ```yaml
 # .github/workflows/ci.yml
 name: CI/CD Pipeline
@@ -397,20 +423,20 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    
+
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - run: npm ci
       - run: npm run lint
       - run: npm run type-check
       - run: npm run test
       - run: npm run build
-      
+
       - name: Auto-merge PR
         if: github.event_name == 'pull_request' && github.actor == 'korallis'
         uses: pascalgn/merge-action@v0.15.6
@@ -420,6 +446,7 @@ jobs:
 ```
 
 #### Quality Gates
+
 - **TypeScript Compilation**: Zero TypeScript errors
 - **Linting**: ESLint passes with zero errors
 - **Unit Tests**: 90%+ code coverage
@@ -428,7 +455,9 @@ jobs:
 - **Security Scan**: No high-severity vulnerabilities
 
 ### Task Implementation Workflow
+
 Each implementation task will follow this pattern:
+
 1. **Create Feature Branch**: `git checkout -b feature/task-name`
 2. **Implement Changes**: Code the specific task requirements
 3. **Add Tests**: Unit and integration tests for new functionality
@@ -443,24 +472,28 @@ Each implementation task will follow this pattern:
 ### Caching Strategy
 
 #### 1. Application-Level Caching
+
 - **Static Data**: Cache EVE SDE data with long TTL (24 hours)
 - **Character Data**: Cache character information with medium TTL (1 hour)
 - **Market Data**: Cache market prices with short TTL (15 minutes)
 - **Optimization Results**: Cache complex calculations with medium TTL (30 minutes)
 
 #### 2. Database Optimization
+
 - **Indexing Strategy**: Optimize queries with appropriate indexes
 - **Connection Pooling**: Use postgres.js connection pooling
 - **Query Optimization**: Use prepared statements and efficient queries
 - **Partitioning**: Partition large tables by character or date
 
 #### 3. API Optimization
+
 - **Rate Limiting**: Implement intelligent rate limiting for ESI calls
 - **Batch Operations**: Group multiple ESI requests where possible
 - **Compression**: Enable gzip compression for API responses
 - **CDN Integration**: Use CDN for static assets and images
 
 #### 4. Frontend Optimization
+
 - **Code Splitting**: Lazy load components and routes
 - **Image Optimization**: Use Next.js Image component with optimization
 - **Bundle Analysis**: Monitor and optimize bundle sizes
@@ -469,18 +502,21 @@ Each implementation task will follow this pattern:
 ### Monitoring and Observability
 
 #### 1. Application Metrics
+
 - **Response Times**: Track API response times and database queries
 - **Error Rates**: Monitor error rates by endpoint and error type
 - **User Engagement**: Track feature usage and user flows
 - **Cache Performance**: Monitor cache hit rates and efficiency
 
 #### 2. Infrastructure Metrics
+
 - **Database Performance**: Monitor connection pool usage and query performance
 - **Redis Performance**: Track memory usage and operation latency
 - **Server Resources**: Monitor CPU, memory, and disk usage
 - **Network Performance**: Track bandwidth usage and latency
 
 #### 3. Business Metrics
+
 - **User Retention**: Track user engagement and return rates
 - **Feature Adoption**: Monitor usage of optimization features
 - **Data Freshness**: Track ESI data synchronization success rates
@@ -493,11 +529,13 @@ Each implementation task will follow this pattern:
 **Eve-Cortex** represents the fusion of advanced AI intelligence with EVE Online's complex universe. The brand embodies precision, intelligence, and technological superiority - core values that resonate with EVE Online's strategic gameplay.
 
 #### Brand Positioning
+
 - **Primary**: AI-powered optimization platform for EVE Online
 - **Secondary**: Strategic advantage through intelligent analysis
 - **Tertiary**: Community-driven excellence in spaceship mastery
 
 #### Brand Personality
+
 - **Intelligent**: Advanced algorithms and data-driven insights
 - **Precise**: Accurate calculations and reliable recommendations
 - **Strategic**: Long-term planning and tactical advantage
@@ -507,6 +545,7 @@ Each implementation task will follow this pattern:
 ### Visual Identity
 
 #### Logo Design Concept
+
 The Eve-Cortex logo combines neural network imagery with space-age aesthetics:
 
 ```
@@ -519,6 +558,7 @@ Primary Logo (SVG):
 ```
 
 #### Logo Variations
+
 1. **Primary Logo**: Full logo with text and icon
 2. **Icon Only**: Hexagonal cortex symbol for favicons/small spaces
 3. **Horizontal**: Logo and text arranged horizontally
@@ -528,99 +568,115 @@ Primary Logo (SVG):
 #### Color Palette
 
 **Primary Colors:**
+
 ```css
 /* Cortex Blue - Primary brand color */
---cortex-blue: #0066FF;
---cortex-blue-dark: #0052CC;
---cortex-blue-light: #3385FF;
+--cortex-blue: #0066ff;
+--cortex-blue-dark: #0052cc;
+--cortex-blue-light: #3385ff;
 
 /* Neural Purple - Secondary accent */
---neural-purple: #6B46C1;
---neural-purple-dark: #553C9A;
---neural-purple-light: #8B5CF6;
+--neural-purple: #6b46c1;
+--neural-purple-dark: #553c9a;
+--neural-purple-light: #8b5cf6;
 
 /* EVE Gold - Accent color inspired by EVE Online */
---eve-gold: #FFB800;
---eve-gold-dark: #E6A600;
---eve-gold-light: #FFCC33;
+--eve-gold: #ffb800;
+--eve-gold-dark: #e6a600;
+--eve-gold-light: #ffcc33;
 ```
 
 **Neutral Colors:**
+
 ```css
 /* Dark Theme (Primary) */
---bg-primary: #0A0A0B;
---bg-secondary: #1A1A1C;
---bg-tertiary: #2A2A2E;
---text-primary: #FFFFFF;
---text-secondary: #B3B3B3;
+--bg-primary: #0a0a0b;
+--bg-secondary: #1a1a1c;
+--bg-tertiary: #2a2a2e;
+--text-primary: #ffffff;
+--text-secondary: #b3b3b3;
 --text-muted: #666666;
 
 /* Light Theme (Alternative) */
---bg-light-primary: #FFFFFF;
---bg-light-secondary: #F8F9FA;
---bg-light-tertiary: #E9ECEF;
+--bg-light-primary: #ffffff;
+--bg-light-secondary: #f8f9fa;
+--bg-light-tertiary: #e9ecef;
 --text-light-primary: #212529;
 --text-light-secondary: #495057;
---text-light-muted: #6C757D;
+--text-light-muted: #6c757d;
 ```
 
 **Status Colors:**
+
 ```css
 /* Success/Positive */
---success: #10B981;
---success-light: #34D399;
+--success: #10b981;
+--success-light: #34d399;
 --success-dark: #059669;
 
 /* Warning/Caution */
---warning: #F59E0B;
---warning-light: #FBBF24;
---warning-dark: #D97706;
+--warning: #f59e0b;
+--warning-light: #fbbf24;
+--warning-dark: #d97706;
 
 /* Error/Danger */
---error: #EF4444;
---error-light: #F87171;
---error-dark: #DC2626;
+--error: #ef4444;
+--error-light: #f87171;
+--error-dark: #dc2626;
 
 /* Info/Neutral */
---info: #3B82F6;
---info-light: #60A5FA;
---info-dark: #2563EB;
+--info: #3b82f6;
+--info-light: #60a5fa;
+--info-dark: #2563eb;
 ```
 
 #### Typography
 
 **Primary Font Stack:**
+
 ```css
 /* Headings - Modern, tech-inspired */
-font-family: 'Inter', 'SF Pro Display', -apple-system, BlinkMacSystemFont, sans-serif;
+font-family:
+  'Inter',
+  'SF Pro Display',
+  -apple-system,
+  BlinkMacSystemFont,
+  sans-serif;
 
 /* Body Text - Highly readable */
-font-family: 'Inter', 'SF Pro Text', -apple-system, BlinkMacSystemFont, sans-serif;
+font-family:
+  'Inter',
+  'SF Pro Text',
+  -apple-system,
+  BlinkMacSystemFont,
+  sans-serif;
 
 /* Monospace - Code and data */
 font-family: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
 ```
 
 **Typography Scale:**
+
 ```css
 /* Headings */
---text-6xl: 3.75rem;  /* 60px - Hero titles */
---text-5xl: 3rem;     /* 48px - Page titles */
---text-4xl: 2.25rem;  /* 36px - Section headers */
+--text-6xl: 3.75rem; /* 60px - Hero titles */
+--text-5xl: 3rem; /* 48px - Page titles */
+--text-4xl: 2.25rem; /* 36px - Section headers */
 --text-3xl: 1.875rem; /* 30px - Subsection headers */
---text-2xl: 1.5rem;   /* 24px - Card titles */
---text-xl: 1.25rem;   /* 20px - Large text */
+--text-2xl: 1.5rem; /* 24px - Card titles */
+--text-xl: 1.25rem; /* 20px - Large text */
 
 /* Body Text */
---text-lg: 1.125rem;  /* 18px - Large body */
---text-base: 1rem;    /* 16px - Default body */
---text-sm: 0.875rem;  /* 14px - Small text */
---text-xs: 0.75rem;   /* 12px - Captions */
+--text-lg: 1.125rem; /* 18px - Large body */
+--text-base: 1rem; /* 16px - Default body */
+--text-sm: 0.875rem; /* 14px - Small text */
+--text-xs: 0.75rem; /* 12px - Captions */
 ```
 
 #### Iconography
 
 **Icon Style Guidelines:**
+
 - **Style**: Outline icons with 2px stroke weight
 - **Corner Radius**: 2px for consistency
 - **Grid**: 24x24px base grid system
@@ -628,6 +684,7 @@ font-family: 'JetBrains Mono', 'SF Mono', Monaco, 'Cascadia Code', monospace;
 - **Theme**: Tech/space inspired with neural network elements
 
 **Custom Icon Set:**
+
 ```
 Core Icons:
 - cortex-brain: Neural network brain
@@ -643,6 +700,7 @@ Core Icons:
 #### UI Components Style Guide
 
 **Buttons:**
+
 ```css
 /* Primary Button */
 .btn-primary {
@@ -672,6 +730,7 @@ Core Icons:
 ```
 
 **Cards:**
+
 ```css
 .card {
   background: var(--bg-secondary);
@@ -690,6 +749,7 @@ Core Icons:
 ```
 
 **Data Visualization:**
+
 ```css
 /* Chart colors for consistent data representation */
 --chart-primary: var(--cortex-blue);
@@ -743,17 +803,20 @@ Core Icons:
 ### Brand Voice and Messaging
 
 #### Tone of Voice
+
 - **Authoritative**: Confident in technical expertise
 - **Approachable**: Complex concepts explained simply
 - **Precise**: Accurate and specific language
 - **Forward-thinking**: Emphasis on optimization and improvement
 
 #### Key Messaging
+
 - **Primary**: "Optimize your EVE Online experience with AI-powered intelligence"
 - **Secondary**: "Strategic advantage through data-driven insights"
 - **Call-to-Action**: "Unlock your potential" / "Optimize now" / "Gain the edge"
 
 #### Content Guidelines
+
 - Use active voice and present tense
 - Emphasize benefits over features
 - Include specific metrics and improvements
@@ -763,18 +826,21 @@ Core Icons:
 ### Implementation Guidelines
 
 #### Logo Usage
+
 - **Minimum Size**: 24px height for digital, 0.5 inches for print
 - **Clear Space**: Minimum 1x logo height on all sides
 - **Backgrounds**: Ensure sufficient contrast (4.5:1 minimum)
 - **Prohibited**: No stretching, rotating, or color modifications
 
 #### Color Usage
+
 - **Primary**: Cortex Blue for main actions and branding
 - **Secondary**: Neural Purple for accents and highlights
 - **Accent**: EVE Gold sparingly for special emphasis
 - **Backgrounds**: Dark theme preferred, light theme for accessibility
 
 #### Accessibility Standards
+
 - **WCAG 2.1 AA Compliance**: All color combinations meet contrast requirements
 - **Color Blindness**: Icons and UI don't rely solely on color
 - **Screen Readers**: Proper alt text and ARIA labels
