@@ -27,7 +27,8 @@
     "ci:test": "npm run test:coverage",
     "ci:build": "npm run build",
     "ci:security": "npm run audit:security",
-    "ci:full": "npm run ci:quality && npm run ci:security && npm run ci:test && npm run ci:build"
+    "ci:full": "npm run ci:quality && npm run ci:security && npm run ci:test && npm run ci:build",
+    "task:complete": "node scripts/automated-task-completion.js"
   },
   "dependencies": {
     "next": "^15.4.1",
