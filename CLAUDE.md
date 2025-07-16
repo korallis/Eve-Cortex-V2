@@ -307,8 +307,15 @@ Before executing ANY task, you MUST read ALL of these files to have complete con
    - NEVER use local task tracking systems
    - tasks.md is the SINGLE SOURCE OF TRUTH for progress
 
-4. **Create Pull Request**
-   - Once task is marked complete in tasks.md, IMMEDIATELY create a PR
+4. **Run Tests Before PR Creation (MANDATORY)**
+   - Run `npm test` to execute all tests
+   - Tests must PASS before creating PR
+   - Fix any test failures or configuration issues
+   - If Jest configuration errors exist, fix them immediately
+   - Only proceed to PR creation after all tests pass
+
+5. **Create Pull Request**
+   - Once task is marked complete in tasks.md AND tests pass, create a PR
    - Use the automated workflow: `npm run task:complete`
    - PR title should match the completed task
 
@@ -317,6 +324,9 @@ Before executing ANY task, you MUST read ALL of these files to have complete con
 - ❌ Creating local task lists
 - ❌ Working without reading all context files first
 - ❌ Not checking dev server status
+- ❌ Creating PR without running tests first
+- ❌ Creating PR when tests are failing
+- ❌ Not fixing Jest configuration errors
 - ❌ Not creating PR after task completion
 - ❌ Working from memory instead of tasks.md
 
