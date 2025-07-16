@@ -20,7 +20,11 @@
         "get_pull_request",
         "create_branch",
         "list_branches",
-        "get_branch"
+        "get_branch",
+        "get_pull_request_status",
+        "push_files",
+        "merge_pull_request",
+        "add_issue_comment"
       ]
     }
   }

@@ -1,4 +1,4 @@
-import { Metadata } from 'next'
+import type { Metadata } from 'next'
 import { BrandShowcase } from '@/components/brand-showcase'
 
 export const metadata: Metadata = {

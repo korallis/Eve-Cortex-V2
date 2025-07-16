@@ -172,6 +172,31 @@ npm run test:coverage
 - **Setup Branch Protection**: `npm run github:setup-protection`
 - **Check Protection Status**: `npm run github:protection-status`
 
+### Automated Task Completion
+
+Eve-Cortex includes an intelligent automated task completion workflow that streamlines development:
+
+- **Complete Tasks Automatically**: `npm run task:complete "Task Name" "Description" [requirements...]`
+
+The automated workflow:
+1. 🌿 Creates a feature branch from main
+2. 📝 Commits all current changes with descriptive messages
+3. 🚀 Pushes the branch and creates a pull request
+4. 🔍 Monitors CI/CD pipeline status automatically
+5. 🔧 Attempts to auto-fix common issues (linting, formatting, security)
+6. 🤖 Auto-merges when all checks pass
+
+**Example Usage:**
+```bash
+npm run task:complete "Setup Authentication" "Implement ESI OAuth with NextAuth.js" "1.1" "1.2"
+```
+
+This feature is particularly useful for:
+- Rapid prototyping and development
+- Automated quality assurance
+- Consistent commit and PR workflows
+- Reducing manual CI/CD intervention
+
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
