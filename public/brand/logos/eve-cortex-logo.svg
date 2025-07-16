@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Hexagonal Cortex Core -->
+  <g id="cortex-core">
+    <path d="M30 15L40 20V30L30 35L20 30V20L30 15Z" fill="#0066FF" stroke="#3385FF" stroke-width="1"/>
+    <!-- Neural pathways -->
+    <circle cx="25" cy="18" r="2" fill="#6B46C1"/>
+    <circle cx="35" cy="18" r="2" fill="#6B46C1"/>
+    <circle cx="25" cy="32" r="2" fill="#6B46C1"/>
+    <circle cx="35" cy="32" r="2" fill="#6B46C1"/>
+    <!-- Connecting lines -->
+    <line x1="25" y1="18" x2="30" y2="15" stroke="#8B5CF6" stroke-width="1"/>
+    <line x1="35" y1="18" x2="30" y2="15" stroke="#8B5CF6" stroke-width="1"/>
+    <line x1="25" y1="32" x2="30" y2="35" stroke="#8B5CF6" stroke-width="1"/>
+    <line x1="35" y1="32" x2="30" y2="35" stroke="#8B5CF6" stroke-width="1"/>
+  </g>
+  
+  <!-- Typography -->
+  <text x="55" y="25" font-family="Inter, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF">EVE</text>
+  <text x="55" y="42" font-family="Inter, sans-serif" font-size="14" font-weight="400" fill="#B3B3B3">CORTEX</text>
+  
+  <!-- Accent line -->
+  <line x1="55" y1="28" x2="120" y2="28" stroke="#FFB800" stroke-width="2"/>
+</svg>

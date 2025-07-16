@@ -1,0 +1,90 @@
+name: Security Scan
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Run security scan every day at 2 AM UTC
+    - cron: '0 2 * * *'
+
+jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Snyk security scan
+        uses: snyk/actions/node@master
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=medium
+
+      - name: Run npm audit
+        run: |
+          echo "🔍 Running npm security audit..."
+          npm audit --audit-level=moderate
+          if [ $? -ne 0 ]; then
+            echo "❌ Security vulnerabilities found!"
+            npm audit --json > audit-results.json
+            exit 1
+          fi
+
+      - name: Check for known security issues
+        run: |
+          echo "🔍 Checking for known security issues..."
+          npx audit-ci --moderate
+          if [ $? -ne 0 ]; then
+            echo "❌ Security issues found that exceed threshold!"
+            exit 1
+          fi
+
+      - name: Upload security scan results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: security-scan-results
+          path: |
+            audit-results.json
+            snyk-results.json
+
+      - name: Create security issue
+        if: failure() && github.event_name == 'schedule'
+        run: |
+          gh issue create \
+            --title "🚨 Security vulnerabilities detected" \
+            --body "Automated security scan found vulnerabilities. Please review the attached artifacts and update dependencies." \
+            --label "security,high-priority"
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  dependency-review:
+    name: Dependency Review
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Dependency Review
+        uses: actions/dependency-review-action@v4
+        with:
+          fail-on-severity: moderate
+          allow-licenses: MIT, Apache-2.0, BSD-2-Clause, BSD-3-Clause, ISC
+          deny-licenses: GPL-2.0, GPL-3.0, AGPL-1.0, AGPL-3.0

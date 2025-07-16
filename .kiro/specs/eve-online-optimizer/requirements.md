@@ -26,7 +26,7 @@ The EVE Online Optimizer is a comprehensive web platform that leverages the EVE 
 
 1. WHEN the system analyzes my character THEN it SHALL automatically calculate and recommend the highest-performing fits for my skill set
 2. WHEN generating recommendations THEN the system SHALL factor in all character-specific modifiers from implants, boosters, and skill levels
-3. WHEN a player has Frigate V THEN the system SHALL apply the 5% per level bonus to hybrid turret damage and recommend fits that maximize this advantage
+3. WHEN a player has Amarr Frigate V THEN the system SHALL apply the 5% per level bonus to small energy turret damage and recommend fits that maximize this advantage the bonuses are different for every skill but this is just an example
 4. WHEN calculating optimal fits THEN the system SHALL use EVE's Dogma system data for precise attribute calculations
 5. WHEN presenting recommendations THEN the system SHALL rank fits by effectiveness and explain why each is optimal for the character
 6. WHEN displaying fits THEN the system SHALL show projected performance metrics with character-specific bonuses applied
