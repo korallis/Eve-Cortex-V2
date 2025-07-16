@@ -59,9 +59,9 @@ describe('ESIClient - Simplified Tests', () => {
   it('should return cached response when available', async () => {
     const cachedData = {
       data: { character_id: 123, name: 'Cached Character' },
-      headers: { 
+      headers: {
         etag: '"abc123"',
-        expires: new Date(Date.now() + 300000).toISOString()
+        expires: new Date(Date.now() + 300000).toISOString(),
       },
       status: 200,
       cached: false,
@@ -102,7 +102,6 @@ describe('ESIClient - Simplified Tests', () => {
   it('should handle timeout errors', async () => {
     const abortError = new Error('The operation was aborted due to timeout')
     abortError.name = 'AbortError'
-    
     ;(global.fetch as jest.Mock).mockRejectedValue(abortError)
     ;(redis.get as jest.Mock).mockResolvedValue(null)
     ;(redis.set as jest.Mock).mockResolvedValue('OK')
@@ -135,9 +134,9 @@ describe('ESIClient - Simplified Tests', () => {
     ;(redis.get as jest.Mock).mockResolvedValue(null)
     ;(redis.set as jest.Mock).mockResolvedValue('OK')
 
-    await expect(
-      client.request('/characters/123/', mockAccessToken)
-    ).rejects.toThrow('Invalid token')
+    await expect(client.request('/characters/123/', mockAccessToken)).rejects.toThrow(
+      'Invalid token'
+    )
   })
 
   it('should cache successful responses', async () => {
