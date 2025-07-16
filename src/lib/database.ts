@@ -6,15 +6,15 @@
 import postgres from 'postgres'
 
 // Database connection configuration
-const DATABASE_URL = process.env.DATABASE_URL || 'postgresql://postgres:postgres@localhost:5432/eve_cortex'
+const DATABASE_URL = process.env['DATABASE_URL'] || 'postgresql://postgres:postgres@localhost:5432/eve_cortex'
 
 // Connection options
 const connectionOptions = {
-  max: parseInt(process.env.DB_MAX_CONNECTIONS || '10'),
+  max: parseInt(process.env['DB_MAX_CONNECTIONS'] || '10'),
   idle_timeout: 20,
   connect_timeout: 10,
-  ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false,
-  onnotice: process.env.NODE_ENV === 'development' ? console.log : undefined,
+  ssl: process.env['DB_SSL'] === 'true' ? { rejectUnauthorized: false } : false,
+  ...(process.env.NODE_ENV === 'development' && { onnotice: console.log }),
 }
 
 // Create database connection
@@ -51,7 +51,7 @@ export async function getDatabaseInfo() {
 // Execute query with error handling
 export async function executeQuery<T>(
   query: string,
-  params: any[] = []
+  params: (string | number | boolean | null)[] = []
 ): Promise<T[]> {
   try {
     const result = await sql.unsafe(query, params)
@@ -64,7 +64,7 @@ export async function executeQuery<T>(
 
 // Transaction wrapper
 export async function withTransaction<T>(
-  callback: (sql: typeof postgres) => Promise<T>
+  callback: (sql: typeof import('postgres').Sql) => Promise<T>
 ): Promise<T> {
   return await sql.begin(callback)
 }
@@ -76,7 +76,7 @@ export async function closeDatabaseConnection(): Promise<void> {
 
 // Database types for TypeScript
 export interface DatabaseRow {
-  [key: string]: any
+  [key: string]: unknown
 }
 
 export interface QueryResult<T = DatabaseRow> {
@@ -97,12 +97,13 @@ export class DatabaseError extends Error {
   }
 }
 
-export function handleDatabaseError(error: any): never {
-  if (error.code) {
+export function handleDatabaseError(error: unknown): never {
+  if (error && typeof error === 'object' && 'code' in error) {
+    const dbError = error as { code: string; message: string; detail?: string }
     throw new DatabaseError(
-      error.message,
-      error.code,
-      error.detail
+      dbError.message,
+      dbError.code,
+      dbError.detail
     )
   }
   throw error

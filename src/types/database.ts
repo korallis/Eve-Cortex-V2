@@ -68,7 +68,7 @@ export interface PerformanceData {
   capacitor_stable: boolean
   capacitor_time?: number
   cost_estimate: number
-  [key: string]: any
+  [key: string]: unknown
 }
 
 // Skill plan types
@@ -178,7 +178,7 @@ export interface QueryOptions {
   offset?: number
   orderBy?: string
   orderDirection?: 'ASC' | 'DESC'
-  where?: Record<string, any>
+  where?: Record<string, unknown>
 }
 
 export interface PaginatedResult<T> {

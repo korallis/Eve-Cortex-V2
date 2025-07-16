@@ -276,6 +276,13 @@ export function formatCurrency(amount: number, options?: FormatOptions): string 
 
 **CRITICAL: This workflow MUST be followed for EVERY task execution without exception.**
 
+**⚠️ ABSOLUTE COMPLIANCE REQUIRED ⚠️**
+- This workflow is MANDATORY and CANNOT be skipped or modified
+- ANY deviation from this workflow is a CRITICAL VIOLATION
+- ALL steps must be completed in the exact order specified
+- NO exceptions, shortcuts, or alternative approaches are permitted
+- Failure to follow this workflow will result in immediate task failure
+
 ### Pre-Task Context Loading (REQUIRED)
 Before executing ANY task, you MUST read ALL of these files to have complete context:
 
@@ -290,45 +297,153 @@ Before executing ANY task, you MUST read ALL of these files to have complete con
    - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/design.md`
    - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
 
+**VERIFIED FILE LOCATIONS** (Updated with confirmed absolute paths):
+- Steering files are located in: `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/`
+- Spec files are located in: `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/`
+- Task tracking file: `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
+
 ### Task Execution Protocol (MANDATORY)
-1. **Check Dev Server Status**
+
+**🔒 EACH STEP IS MANDATORY AND MUST BE COMPLETED IN ORDER 🔒**
+
+**Step 1: Check Dev Server Status** ✅ REQUIRED
    - Run `ps aux | grep "next dev"` to check if dev server is running
    - If running, kill it: `pkill -f "next dev"`
    - Only then proceed with task execution
+   - ⚠️ VIOLATION: Proceeding without checking dev server status
 
-2. **Execute Task with Full Context**
-   - Work directly from the tasks.md file
+**Step 2: Pre-Implementation Code Analysis** ✅ REQUIRED
+   - Run `npm run lint` to check current code quality
+   - Run `npm run type-check` to verify TypeScript status
+   - Check existing patterns in similar files before implementing new features
+   - Review imports and dependencies in related files
+   - ⚠️ VIOLATION: Skipping lint/type-check before implementation
+
+**Step 3: Execute Task with Full Context** ✅ REQUIRED
+   - Work directly from `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
    - NEVER create local task lists or use TodoWrite tool
    - NEVER work from memory or assumptions
-   - Use the complete context from all files read above
+   - Use the complete context from all files read above (use absolute paths)
+   - Follow existing code patterns and naming conventions
+   - ⚠️ VIOLATION: Using TodoWrite tool or working from memory
 
-3. **Update Progress in tasks.md**
-   - Mark task as `[x]` completed directly in tasks.md
+**Step 4: Implementation Best Practices** ✅ REQUIRED
+   - Always read existing similar files first to understand patterns
+   - Use consistent TypeScript types and interfaces
+   - Follow the established import/export patterns
+   - Ensure proper error handling and logging
+   - Add comprehensive JSDoc comments for public APIs
+   - ⚠️ VIOLATION: Not following existing patterns or missing TypeScript types
+
+**Step 5: Code Quality Validation** ✅ REQUIRED
+   - Run `npm run lint` after implementation
+   - Run `npm run type-check` to verify TypeScript compliance
+   - Fix any linting or type errors before proceeding
+   - Ensure all new files follow project naming conventions
+   - ⚠️ VIOLATION: Proceeding with lint/type errors unfixed
+
+**Step 6: Update Progress in tasks.md** ✅ REQUIRED
+   - Mark task as `[x]` completed directly in `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
    - NEVER use local task tracking systems
    - tasks.md is the SINGLE SOURCE OF TRUTH for progress
+   - ⚠️ VIOLATION: Using any tracking system other than tasks.md
 
-4. **Run Tests Before PR Creation (MANDATORY)**
+**Step 7: Run Tests Before PR Creation** ✅ MANDATORY
    - Run `npm test` to execute all tests
    - Tests must PASS before creating PR
    - Fix any test failures or configuration issues
    - If Jest configuration errors exist, fix them immediately
    - Only proceed to PR creation after all tests pass
+   - ⚠️ VIOLATION: Creating PR without running tests or when tests fail
 
-5. **Create Pull Request**
+**Step 8: Create Pull Request** ✅ REQUIRED
    - Once task is marked complete in tasks.md AND tests pass, create a PR
    - Use the automated workflow: `npm run task:complete`
    - PR title should match the completed task
+   - ⚠️ VIOLATION: Not creating PR after task completion
 
-### VIOLATIONS THAT ARE FORBIDDEN
+### CRITICAL FILE PATH REMINDERS
+**ALWAYS use these exact absolute paths:**
+- Steering files: `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/`
+- Spec files: `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/`
+- Task tracking: `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
+- Main project: `/Users/lee/Documents/Eve-Cortex V2/CLAUDE.md`
+
+**If files cannot be found:**
+1. First check the `.kiro` folder structure
+2. Use the Read tool with full absolute paths
+3. Never assume relative paths will work
+4. Refer to the verified file locations above
+
+### 🚨 CRITICAL VIOLATIONS - IMMEDIATE TASK FAILURE 🚨
+
+**ANY OF THESE VIOLATIONS WILL RESULT IN IMMEDIATE TASK FAILURE:**
+
+🔴 **WORKFLOW VIOLATIONS:**
 - ❌ Using TodoWrite tool for task tracking
 - ❌ Creating local task lists
 - ❌ Working without reading all context files first
 - ❌ Not checking dev server status
+- ❌ Skipping any step in the mandatory workflow
+- ❌ Completing steps out of order
+
+🔴 **TESTING VIOLATIONS:**
 - ❌ Creating PR without running tests first
 - ❌ Creating PR when tests are failing
 - ❌ Not fixing Jest configuration errors
+- ❌ Skipping `npm test` before PR creation
+
+🔴 **CODE QUALITY VIOLATIONS:**
+- ❌ Skipping lint/type-check before and after implementation
+- ❌ Not following existing code patterns
+- ❌ Creating files without proper TypeScript types
+- ❌ Not reading similar existing files first
+- ❌ Missing error handling or logging
+- ❌ Inconsistent naming conventions
+- ❌ Not using absolute paths for file operations
+
+🔴 **TASK MANAGEMENT VIOLATIONS:**
 - ❌ Not creating PR after task completion
 - ❌ Working from memory instead of tasks.md
+- ❌ Using any tracking system other than tasks.md
+- ❌ Not marking tasks as complete in tasks.md
+
+**⚠️ ENFORCEMENT NOTICE:**
+- These violations are AUTOMATICALLY DETECTED
+- NO warnings will be given - immediate failure
+- The workflow MUST be restarted from Step 1 if any violation occurs
+- NO exceptions or special circumstances are permitted
+
+### ✅ MANDATORY DEVELOPMENT PRACTICES - NO EXCEPTIONS
+
+**🔒 COMMAND EXECUTION SEQUENCE (MANDATORY):**
+1. `npm run lint` (before starting) - REQUIRED
+2. `npm run type-check` (before starting) - REQUIRED
+3. Implement features following existing patterns - REQUIRED
+4. `npm run lint` (after implementation) - REQUIRED
+5. `npm run type-check` (after implementation) - REQUIRED
+6. `npm test` (mandatory before PR) - REQUIRED
+
+**🔒 CODE QUALITY REQUIREMENTS (NON-NEGOTIABLE):**
+- All new files must have proper TypeScript types - MANDATORY
+- Follow existing import/export patterns exactly - MANDATORY
+- Use consistent error handling across the codebase - MANDATORY
+- Add JSDoc comments for public APIs - MANDATORY
+- Follow project naming conventions (kebab-case files, PascalCase exports) - MANDATORY
+- Always read similar files first to understand patterns - MANDATORY
+
+**🔒 FILE ORGANIZATION STANDARDS (ENFORCED):**
+- Use absolute paths for all file operations - MANDATORY
+- Follow the established directory structure - MANDATORY
+- Import order: React/Next.js → Third-party → Internal → Relative → Types - MANDATORY
+- Use path aliases (@/lib, @/components, etc.) - MANDATORY
+- Maintain consistent file naming across the project - MANDATORY
+
+**🚨 COMPLIANCE MONITORING:**
+- ALL practices above are CONTINUOUSLY MONITORED
+- ANY deviation results in IMMEDIATE TASK FAILURE
+- NO flexibility or interpretation allowed
+- EXACT compliance is the ONLY acceptable standard
 
 ### USAGE INSTRUCTIONS
 

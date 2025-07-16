@@ -30,11 +30,11 @@ export async function checkDatabaseHealth(): Promise<DatabaseHealth> {
     
     return {
       isHealthy: true,
-      database: result[0].database,
-      user: result[0].user,
-      version: result[0].version,
-      currentTime: result[0].current_time,
-      connectionCount: parseInt(poolInfo[0].connection_count) || 0
+      database: result[0]?.['database'] || 'unknown',
+      user: result[0]?.['user'] || 'unknown',
+      version: result[0]?.['version'] || 'unknown',
+      currentTime: result[0]?.['current_time'] || new Date(),
+      connectionCount: parseInt(poolInfo[0]?.['connection_count'] || '0') || 0
     }
   } catch (error) {
     console.error('Database health check failed:', error)
@@ -70,17 +70,18 @@ export async function checkTableStructure() {
     
     // Group by table name
     const tableStructure = tables.reduce((acc, row) => {
-      if (!acc[row.table_name]) {
-        acc[row.table_name] = []
+      const tableName = row['table_name'] as string
+      if (!acc[tableName]) {
+        acc[tableName] = []
       }
-      acc[row.table_name].push({
-        column: row.column_name,
-        type: row.data_type,
-        nullable: row.is_nullable === 'YES',
-        default: row.column_default
+      acc[tableName].push({
+        column: row['column_name'],
+        type: row['data_type'],
+        nullable: row['is_nullable'] === 'YES',
+        default: row['column_default']
       })
       return acc
-    }, {} as Record<string, any[]>)
+    }, {} as Record<string, unknown[]>)
     
     return tableStructure
   } catch (error) {
@@ -129,12 +130,12 @@ export async function getDatabaseStats() {
     `
     
     return {
-      characterCount: parseInt(stats[0].character_count) || 0,
-      skillCount: parseInt(stats[0].skill_count) || 0,
-      fittingCount: parseInt(stats[0].fitting_count) || 0,
-      skillPlanCount: parseInt(stats[0].skill_plan_count) || 0,
-      migrationCount: parseInt(stats[0].migration_count) || 0,
-      databaseSize: parseInt(stats[0].database_size) || 0
+      characterCount: parseInt(stats[0]?.['character_count'] || '0') || 0,
+      skillCount: parseInt(stats[0]?.['skill_count'] || '0') || 0,
+      fittingCount: parseInt(stats[0]?.['fitting_count'] || '0') || 0,
+      skillPlanCount: parseInt(stats[0]?.['skill_plan_count'] || '0') || 0,
+      migrationCount: parseInt(stats[0]?.['migration_count'] || '0') || 0,
+      databaseSize: parseInt(stats[0]?.['database_size'] || '0') || 0
     }
   } catch (error) {
     console.error('Error getting database stats:', error)
@@ -156,7 +157,7 @@ export async function performanceTest() {
     
     // Connection test
     const connectionStart = Date.now()
-    const newConnection = await sql`SELECT NOW()`
+    await sql`SELECT NOW()`
     const connectionTime = Date.now() - connectionStart
     
     return {
