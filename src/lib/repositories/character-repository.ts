@@ -119,6 +119,66 @@ export class CharacterRepository extends BaseRepository<Character> {
   }
 
   /**
+   * Find character by EVE ID (alias for findByEveCharacterId)
+   */
+  async findByEveId(eveCharacterId: number): Promise<Character | null> {
+    return this.findByEveCharacterId(eveCharacterId)
+  }
+
+  /**
+   * Delete all skills for a character
+   */
+  async deleteSkills(characterId: number): Promise<void> {
+    try {
+      await sql`
+        DELETE FROM character_skills 
+        WHERE character_id = ${characterId}
+      `
+    } catch (error) {
+      console.error('Error deleting character skills:', error)
+      throw error
+    }
+  }
+
+  /**
+   * Create a new skill for a character
+   */
+  async createSkill(skill: {
+    character_id: number
+    skill_type_id: number
+    trained_skill_level: number
+    skillpoints_in_skill: number
+    active_skill_level: number
+  }): Promise<any> {
+    try {
+      const result = await sql`
+        INSERT INTO character_skills (
+          character_id,
+          skill_type_id,
+          trained_skill_level,
+          skillpoints_in_skill,
+          active_skill_level,
+          created_at,
+          updated_at
+        ) VALUES (
+          ${skill.character_id},
+          ${skill.skill_type_id},
+          ${skill.trained_skill_level},
+          ${skill.skillpoints_in_skill},
+          ${skill.active_skill_level},
+          NOW(),
+          NOW()
+        )
+        RETURNING *
+      `
+      return result[0]
+    } catch (error) {
+      console.error('Error creating character skill:', error)
+      throw error
+    }
+  }
+
+  /**
    * Get character statistics
    */
   async getCharacterStats() {
