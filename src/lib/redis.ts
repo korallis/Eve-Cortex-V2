@@ -16,8 +16,8 @@ const connectionOptions = {
   lazyConnect: true,
   keepAlive: 30000,
   family: 4,
-  ...(process.env.NODE_ENV === 'development' && { 
-    showFriendlyErrorStack: true 
+  ...(process.env.NODE_ENV === 'development' && {
+    showFriendlyErrorStack: true,
   }),
 }
 
@@ -41,7 +41,7 @@ export async function getRedisInfo() {
     const info = await redis.info()
     const lines = info.split('\n')
     const parsed = {} as Record<string, string>
-    
+
     lines.forEach(line => {
       if (line.includes(':')) {
         const [key, value] = line.split(':')
@@ -50,7 +50,7 @@ export async function getRedisInfo() {
         }
       }
     })
-    
+
     return {
       redis_version: parsed['redis_version'],
       connected_clients: parsed['connected_clients'],
@@ -100,8 +100,8 @@ export async function getCached<T>(key: string): Promise<T | null> {
 }
 
 export async function setCached<T>(
-  key: string, 
-  value: T, 
+  key: string,
+  value: T,
   ttl: number = CACHE_TTL.CHARACTER_DATA
 ): Promise<boolean> {
   try {
@@ -128,7 +128,7 @@ export async function invalidatePattern(pattern: string): Promise<number> {
   try {
     const keys = await redis.keys(`eve_cortex:${pattern}`)
     if (keys.length === 0) return 0
-    
+
     const deleted = await redis.del(...keys)
     return deleted
   } catch (error) {
@@ -155,23 +155,21 @@ export async function invalidateCharacterData(characterId: number) {
 
 // Market data caching
 export async function getCachedMarketData(regionId: number, typeId?: number) {
-  const key = typeId 
+  const key = typeId
     ? generateCacheKey(CACHE_KEYS.MARKET, regionId, typeId)
     : generateCacheKey(CACHE_KEYS.MARKET, regionId)
   return getCached(key)
 }
 
 export async function setCachedMarketData(regionId: number, data: any, typeId?: number) {
-  const key = typeId 
+  const key = typeId
     ? generateCacheKey(CACHE_KEYS.MARKET, regionId, typeId)
     : generateCacheKey(CACHE_KEYS.MARKET, regionId)
   return setCached(key, data, CACHE_TTL.MARKET_DATA)
 }
 
 export async function invalidateMarketData(regionId?: number) {
-  const pattern = regionId 
-    ? `${CACHE_KEYS.MARKET}:${regionId}*`
-    : `${CACHE_KEYS.MARKET}*`
+  const pattern = regionId ? `${CACHE_KEYS.MARKET}:${regionId}*` : `${CACHE_KEYS.MARKET}*`
   return invalidatePattern(pattern)
 }
 
@@ -226,22 +224,20 @@ export async function setCachedFitting(fittingId: number, data: any) {
 }
 
 export async function invalidateFittings(characterId?: number) {
-  const pattern = characterId 
-    ? `${CACHE_KEYS.FITTING}:*:${characterId}*`
-    : `${CACHE_KEYS.FITTING}*`
+  const pattern = characterId ? `${CACHE_KEYS.FITTING}:*:${characterId}*` : `${CACHE_KEYS.FITTING}*`
   return invalidatePattern(pattern)
 }
 
 // Static data caching (SDE data)
 export async function getCachedStaticData(dataType: string, id?: number) {
-  const key = id 
+  const key = id
     ? generateCacheKey(CACHE_KEYS.STATIC, dataType, id)
     : generateCacheKey(CACHE_KEYS.STATIC, dataType)
   return getCached(key)
 }
 
 export async function setCachedStaticData(dataType: string, data: any, id?: number) {
-  const key = id 
+  const key = id
     ? generateCacheKey(CACHE_KEYS.STATIC, dataType, id)
     : generateCacheKey(CACHE_KEYS.STATIC, dataType)
   return setCached(key, data, CACHE_TTL.STATIC_DATA)
@@ -252,7 +248,7 @@ export async function getCacheStats() {
   try {
     const info = await getRedisInfo()
     const keyCount = await redis.dbsize()
-    
+
     return {
       connected: await checkRedisHealth(),
       key_count: keyCount,
@@ -272,7 +268,7 @@ export async function warmCache(characterId: number) {
     // This would typically fetch and cache frequently accessed data
     // Implementation depends on the specific data sources
     console.log(`Warming cache for character ${characterId}`)
-    
+
     // Example: Pre-load character data, skills, active fittings
     // These would be actual API calls in production
     const warmingTasks: Promise<any>[] = [
@@ -280,7 +276,7 @@ export async function warmCache(characterId: number) {
       // getCachedSkillPlan(characterId, 1),
       // getCachedFitting(1),
     ]
-    
+
     await Promise.allSettled(warmingTasks)
     return true
   } catch (error) {
@@ -308,11 +304,7 @@ export class CacheError extends Error {
 
 export function handleCacheError(error: unknown, operation: string, key?: string): never {
   if (error instanceof Error) {
-    throw new CacheError(
-      error.message,
-      operation,
-      key
-    )
+    throw new CacheError(error.message, operation, key)
   }
   throw error
 }

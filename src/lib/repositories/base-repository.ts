@@ -17,7 +17,7 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
       const result = await sql`
         SELECT * FROM ${sql(this.tableName)} WHERE id = ${id}
       `
-      return result[0] as T || null
+      return (result[0] as T) || null
     } catch (error) {
       console.error(`Error finding ${this.tableName} by ID:`, error)
       throw error
@@ -30,13 +30,13 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
   async findAll(options: QueryOptions = {}): Promise<T[]> {
     try {
       const { limit = 100, offset = 0, orderBy = 'id', orderDirection = 'ASC' } = options
-      
+
       const result = await sql`
         SELECT * FROM ${sql(this.tableName)}
         ORDER BY ${sql(orderBy)} ${sql(orderDirection)}
         LIMIT ${limit} OFFSET ${offset}
       `
-      
+
       return result as unknown as T[]
     } catch (error) {
       console.error(`Error finding all ${this.tableName}:`, error)
@@ -47,7 +47,11 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
   /**
    * Find records with pagination
    */
-  async findPaginated(page: number = 1, limit: number = 10, options: QueryOptions = {}): Promise<PaginatedResult<T>> {
+  async findPaginated(
+    page: number = 1,
+    limit: number = 10,
+    options: QueryOptions = {}
+  ): Promise<PaginatedResult<T>> {
     try {
       const offset = (page - 1) * limit
       const { orderBy = 'id', orderDirection = 'ASC' } = options
@@ -70,7 +74,7 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
         total,
         page,
         limit,
-        totalPages: Math.ceil(total / limit)
+        totalPages: Math.ceil(total / limit),
       }
     } catch (error) {
       console.error(`Error paginating ${this.tableName}:`, error)
@@ -86,18 +90,18 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
       const dataWithTimestamps = {
         ...data,
         created_at: new Date(),
-        updated_at: new Date()
+        updated_at: new Date(),
       }
 
       const columns = Object.keys(dataWithTimestamps)
       const values = Object.values(dataWithTimestamps)
-      
+
       const result = await sql`
         INSERT INTO ${sql(this.tableName)} (${sql(columns)})
         VALUES (${sql(values)})
         RETURNING *
       `
-      
+
       return result[0] as T
     } catch (error) {
       console.error(`Error creating ${this.tableName}:`, error)
@@ -112,7 +116,7 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
     try {
       const dataWithTimestamp = {
         ...data,
-        updated_at: new Date()
+        updated_at: new Date(),
       }
 
       const setPairs = Object.entries(dataWithTimestamp)
@@ -125,8 +129,8 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
         WHERE id = ${id}
         RETURNING *
       `
-      
-      return result[0] as T || null
+
+      return (result[0] as T) || null
     } catch (error) {
       console.error(`Error updating ${this.tableName}:`, error)
       throw error
@@ -141,7 +145,7 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
       const result = await sql`
         DELETE FROM ${sql(this.tableName)} WHERE id = ${id}
       `
-      
+
       return result.count > 0
     } catch (error) {
       console.error(`Error deleting ${this.tableName}:`, error)
@@ -157,7 +161,7 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
       const result = await sql`
         SELECT EXISTS(SELECT 1 FROM ${sql(this.tableName)} WHERE id = ${id})
       `
-      
+
       return result[0]?.['exists'] || false
     } catch (error) {
       console.error(`Error checking existence in ${this.tableName}:`, error)
@@ -175,11 +179,12 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
         const firstCondition = Object.entries(where)[0]
         if (firstCondition) {
           const [key, value] = firstCondition
-          const result = await sql`SELECT COUNT(*) as total FROM ${sql(this.tableName)} WHERE ${sql(key)} = ${value as string | number | boolean}`
+          const result =
+            await sql`SELECT COUNT(*) as total FROM ${sql(this.tableName)} WHERE ${sql(key)} = ${value as string | number | boolean}`
           return parseInt(result[0]?.['total'] || '0')
         }
       }
-      
+
       const result = await sql`SELECT COUNT(*) as total FROM ${sql(this.tableName)}`
       return parseInt(result[0]?.['total'] || '0')
     } catch (error) {

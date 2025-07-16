@@ -44,24 +44,22 @@ export async function ensureMigrationsTable(): Promise<void> {
 export async function loadMigrations(migrationsDir: string): Promise<Migration[]> {
   try {
     const files = await readdir(migrationsDir)
-    const migrationFiles = files
-      .filter(file => file.endsWith('.sql'))
-      .sort()
+    const migrationFiles = files.filter(file => file.endsWith('.sql')).sort()
 
     const migrations: Migration[] = []
-    
+
     for (const filename of migrationFiles) {
       const filePath = join(migrationsDir, filename)
       const content = await readFile(filePath, 'utf8')
-      
+
       // Extract version from filename (e.g., 001_create_users.sql -> 1)
       const versionMatch = filename.match(/^(\d+)_/)
       const version = versionMatch ? parseInt(versionMatch[1] || '0') : 0
-      
+
       migrations.push({
         filename,
         version,
-        sql: content
+        sql: content,
       })
     }
 
@@ -94,17 +92,17 @@ export async function getExecutedMigrations(): Promise<MigrationRecord[]> {
  */
 export async function executeMigration(migration: Migration): Promise<void> {
   try {
-    await sql.begin(async (sql) => {
+    await sql.begin(async sql => {
       // Execute the migration SQL
       await sql.unsafe(migration.sql)
-      
+
       // Record the migration as executed
       await sql`
         INSERT INTO migrations (filename)
         VALUES (${migration.filename})
       `
     })
-    
+
     console.log(`Migration ${migration.filename} executed successfully`)
   } catch (error) {
     console.error(`Failed to execute migration ${migration.filename}:`, error)
@@ -118,26 +116,26 @@ export async function executeMigration(migration: Migration): Promise<void> {
 export async function runMigrations(migrationsDir: string): Promise<void> {
   try {
     await ensureMigrationsTable()
-    
+
     const migrations = await loadMigrations(migrationsDir)
     const executed = await getExecutedMigrations()
     const executedFilenames = new Set(executed.map(m => m.filename))
-    
+
     const pendingMigrations = migrations.filter(
       migration => !executedFilenames.has(migration.filename)
     )
-    
+
     if (pendingMigrations.length === 0) {
       console.log('No pending migrations')
       return
     }
-    
+
     console.log(`Running ${pendingMigrations.length} pending migrations...`)
-    
+
     for (const migration of pendingMigrations) {
       await executeMigration(migration)
     }
-    
+
     console.log('All migrations completed successfully')
   } catch (error) {
     console.error('Migration runner failed:', error)
@@ -155,19 +153,19 @@ export async function getMigrationStatus(migrationsDir: string): Promise<{
 }> {
   try {
     await ensureMigrationsTable()
-    
+
     const migrations = await loadMigrations(migrationsDir)
     const executed = await getExecutedMigrations()
     const executedFilenames = new Set(executed.map(m => m.filename))
-    
+
     const pendingMigrations = migrations.filter(
       migration => !executedFilenames.has(migration.filename)
     )
-    
+
     return {
       total: migrations.length,
       executed: executed.length,
-      pending: pendingMigrations.map(m => m.filename)
+      pending: pendingMigrations.map(m => m.filename),
     }
   } catch (error) {
     console.error('Failed to get migration status:', error)
@@ -181,24 +179,24 @@ export async function getMigrationStatus(migrationsDir: string): Promise<{
 export async function rollbackLastMigration(): Promise<void> {
   try {
     const executed = await getExecutedMigrations()
-    
+
     if (executed.length === 0) {
       console.log('No migrations to rollback')
       return
     }
-    
+
     const lastMigration = executed[executed.length - 1]
-    
+
     if (!lastMigration) {
       console.log('No migrations to rollback')
       return
     }
-    
+
     await sql`
       DELETE FROM migrations
       WHERE filename = ${lastMigration.filename}
     `
-    
+
     console.log(`Rolled back migration: ${lastMigration.filename}`)
     console.log('⚠️  Note: This only removes the migration record, not the schema changes')
   } catch (error) {

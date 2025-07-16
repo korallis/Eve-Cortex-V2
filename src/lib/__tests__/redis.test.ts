@@ -3,13 +3,13 @@
  * Comprehensive test suite for Redis caching functionality
  */
 
-import { 
-  redis, 
-  checkRedisHealth, 
-  getRedisInfo, 
-  getCached, 
-  setCached, 
-  deleteCached, 
+import {
+  redis,
+  checkRedisHealth,
+  getRedisInfo,
+  getCached,
+  setCached,
+  deleteCached,
   invalidatePattern,
   generateCacheKey,
   getCachedCharacterData,
@@ -30,7 +30,7 @@ import {
   getCacheStats,
   warmCache,
   CACHE_KEYS,
-  CACHE_TTL
+  CACHE_TTL,
 } from '../redis'
 
 // Mock Redis for testing
@@ -60,7 +60,7 @@ describe('Redis Cache System', () => {
   describe('Health Checks', () => {
     test('should return true for healthy Redis connection', async () => {
       mockRedis.ping.mockResolvedValue('PONG')
-      
+
       const result = await checkRedisHealth()
       expect(result).toBe(true)
       expect(mockRedis.ping).toHaveBeenCalled()
@@ -68,21 +68,22 @@ describe('Redis Cache System', () => {
 
     test('should return false for unhealthy Redis connection', async () => {
       mockRedis.ping.mockRejectedValue(new Error('Connection failed'))
-      
+
       const result = await checkRedisHealth()
       expect(result).toBe(false)
     })
 
     test('should parse Redis info correctly', async () => {
-      const mockInfo = 'redis_version:7.0.0\r\nconnected_clients:1\r\nused_memory_human:1.2M\r\nuptime_in_seconds:3600\r\n'
+      const mockInfo =
+        'redis_version:7.0.0\r\nconnected_clients:1\r\nused_memory_human:1.2M\r\nuptime_in_seconds:3600\r\n'
       mockRedis.info.mockResolvedValue(mockInfo)
-      
+
       const result = await getRedisInfo()
       expect(result).toEqual({
         redis_version: '7.0.0',
         connected_clients: '1',
         used_memory_human: '1.2M',
-        uptime_in_seconds: '3600'
+        uptime_in_seconds: '3600',
       })
     })
   })
@@ -108,7 +109,7 @@ describe('Redis Cache System', () => {
     test('should get cached value successfully', async () => {
       const testData = { test: 'value', number: 123 }
       mockRedis.get.mockResolvedValue(JSON.stringify(testData))
-      
+
       const result = await getCached('test:key')
       expect(result).toEqual(testData)
       expect(mockRedis.get).toHaveBeenCalledWith('test:key')
@@ -116,7 +117,7 @@ describe('Redis Cache System', () => {
 
     test('should return null for non-existent key', async () => {
       mockRedis.get.mockResolvedValue(null)
-      
+
       const result = await getCached('nonexistent:key')
       expect(result).toBeNull()
     })
@@ -124,7 +125,7 @@ describe('Redis Cache System', () => {
     test('should set cached value with TTL', async () => {
       const testData = { test: 'value' }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCached('test:key', testData, 300)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith('test:key', 300, JSON.stringify(testData))
@@ -132,7 +133,7 @@ describe('Redis Cache System', () => {
 
     test('should delete cached value', async () => {
       mockRedis.del.mockResolvedValue(1)
-      
+
       const result = await deleteCached('test:key')
       expect(result).toBe(true)
       expect(mockRedis.del).toHaveBeenCalledWith('test:key')
@@ -142,7 +143,7 @@ describe('Redis Cache System', () => {
       const mockKeys = ['eve_cortex:test:1', 'eve_cortex:test:2']
       mockRedis.keys.mockResolvedValue(mockKeys)
       mockRedis.del.mockResolvedValue(2)
-      
+
       const result = await invalidatePattern('test:*')
       expect(result).toBe(2)
       expect(mockRedis.keys).toHaveBeenCalledWith('eve_cortex:test:*')
@@ -154,12 +155,12 @@ describe('Redis Cache System', () => {
     test('should cache character data correctly', async () => {
       const characterData = { id: 123, name: 'Test Character' }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCachedCharacterData(123, characterData)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:character:123', 
-        CACHE_TTL.CHARACTER_DATA, 
+        'eve_cortex:character:123',
+        CACHE_TTL.CHARACTER_DATA,
         JSON.stringify(characterData)
       )
     })
@@ -167,7 +168,7 @@ describe('Redis Cache System', () => {
     test('should retrieve cached character data', async () => {
       const characterData = { id: 123, name: 'Test Character' }
       mockRedis.get.mockResolvedValue(JSON.stringify(characterData))
-      
+
       const result = await getCachedCharacterData(123)
       expect(result).toEqual(characterData)
       expect(mockRedis.get).toHaveBeenCalledWith('eve_cortex:character:123')
@@ -177,7 +178,7 @@ describe('Redis Cache System', () => {
       const mockKeys = ['eve_cortex:character:123:basic', 'eve_cortex:character:123:skills']
       mockRedis.keys.mockResolvedValue(mockKeys)
       mockRedis.del.mockResolvedValue(2)
-      
+
       const result = await invalidateCharacterData(123)
       expect(result).toBe(2)
       expect(mockRedis.keys).toHaveBeenCalledWith('eve_cortex:character:123*')
@@ -188,12 +189,12 @@ describe('Redis Cache System', () => {
     test('should cache market data for region', async () => {
       const marketData = { orders: [], history: [] }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCachedMarketData(10000002, marketData)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:market:10000002', 
-        CACHE_TTL.MARKET_DATA, 
+        'eve_cortex:market:10000002',
+        CACHE_TTL.MARKET_DATA,
         JSON.stringify(marketData)
       )
     })
@@ -201,12 +202,12 @@ describe('Redis Cache System', () => {
     test('should cache market data for specific type', async () => {
       const marketData = { orders: [], history: [] }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCachedMarketData(10000002, marketData, 34)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:market:10000002:34', 
-        CACHE_TTL.MARKET_DATA, 
+        'eve_cortex:market:10000002:34',
+        CACHE_TTL.MARKET_DATA,
         JSON.stringify(marketData)
       )
     })
@@ -214,7 +215,7 @@ describe('Redis Cache System', () => {
     test('should retrieve cached market data', async () => {
       const marketData = { orders: [], history: [] }
       mockRedis.get.mockResolvedValue(JSON.stringify(marketData))
-      
+
       const result = await getCachedMarketData(10000002)
       expect(result).toEqual(marketData)
       expect(mockRedis.get).toHaveBeenCalledWith('eve_cortex:market:10000002')
@@ -224,7 +225,7 @@ describe('Redis Cache System', () => {
   describe('ESI Rate Limiting', () => {
     test('should check ESI rate limit when not limited', async () => {
       mockRedis.get.mockResolvedValue(null)
-      
+
       const result = await checkESIRateLimit('/characters/123/')
       expect(result).toBe(true)
       expect(mockRedis.get).toHaveBeenCalledWith('eve_cortex:esi_rate:/characters/123/')
@@ -232,19 +233,19 @@ describe('Redis Cache System', () => {
 
     test('should check ESI rate limit when limited', async () => {
       mockRedis.get.mockResolvedValue('1')
-      
+
       const result = await checkESIRateLimit('/characters/123/')
       expect(result).toBe(false)
     })
 
     test('should set ESI rate limit', async () => {
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setESIRateLimit('/characters/123/', 1)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:esi_rate:/characters/123/', 
-        CACHE_TTL.ESI_RATE, 
+        'eve_cortex:esi_rate:/characters/123/',
+        CACHE_TTL.ESI_RATE,
         '1'
       )
     })
@@ -254,12 +255,12 @@ describe('Redis Cache System', () => {
     test('should cache skill plan data', async () => {
       const skillPlan = { id: 1, character_id: 123, skills: [] }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCachedSkillPlan(123, 1, skillPlan)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:skill_plan:123:1', 
-        CACHE_TTL.SKILL_PLANS, 
+        'eve_cortex:skill_plan:123:1',
+        CACHE_TTL.SKILL_PLANS,
         JSON.stringify(skillPlan)
       )
     })
@@ -267,7 +268,7 @@ describe('Redis Cache System', () => {
     test('should retrieve cached skill plan', async () => {
       const skillPlan = { id: 1, character_id: 123, skills: [] }
       mockRedis.get.mockResolvedValue(JSON.stringify(skillPlan))
-      
+
       const result = await getCachedSkillPlan(123, 1)
       expect(result).toEqual(skillPlan)
       expect(mockRedis.get).toHaveBeenCalledWith('eve_cortex:skill_plan:123:1')
@@ -277,7 +278,7 @@ describe('Redis Cache System', () => {
       const mockKeys = ['eve_cortex:skill_plan:123:1', 'eve_cortex:skill_plan:123:2']
       mockRedis.keys.mockResolvedValue(mockKeys)
       mockRedis.del.mockResolvedValue(2)
-      
+
       const result = await invalidateSkillPlans(123)
       expect(result).toBe(2)
       expect(mockRedis.keys).toHaveBeenCalledWith('eve_cortex:skill_plan:123*')
@@ -288,12 +289,12 @@ describe('Redis Cache System', () => {
     test('should cache fitting data', async () => {
       const fitting = { id: 1, ship_type_id: 597, modules: [] }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCachedFitting(1, fitting)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:fitting:1', 
-        CACHE_TTL.FITTINGS, 
+        'eve_cortex:fitting:1',
+        CACHE_TTL.FITTINGS,
         JSON.stringify(fitting)
       )
     })
@@ -301,7 +302,7 @@ describe('Redis Cache System', () => {
     test('should retrieve cached fitting', async () => {
       const fitting = { id: 1, ship_type_id: 597, modules: [] }
       mockRedis.get.mockResolvedValue(JSON.stringify(fitting))
-      
+
       const result = await getCachedFitting(1)
       expect(result).toEqual(fitting)
       expect(mockRedis.get).toHaveBeenCalledWith('eve_cortex:fitting:1')
@@ -311,7 +312,7 @@ describe('Redis Cache System', () => {
       const mockKeys = ['eve_cortex:fitting:1', 'eve_cortex:fitting:2']
       mockRedis.keys.mockResolvedValue(mockKeys)
       mockRedis.del.mockResolvedValue(2)
-      
+
       const result = await invalidateFittings()
       expect(result).toBe(2)
       expect(mockRedis.keys).toHaveBeenCalledWith('eve_cortex:fitting*')
@@ -322,12 +323,12 @@ describe('Redis Cache System', () => {
     test('should cache static data', async () => {
       const staticData = { types: [], groups: [] }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCachedStaticData('ship_types', staticData)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:static:ship_types', 
-        CACHE_TTL.STATIC_DATA, 
+        'eve_cortex:static:ship_types',
+        CACHE_TTL.STATIC_DATA,
         JSON.stringify(staticData)
       )
     })
@@ -335,12 +336,12 @@ describe('Redis Cache System', () => {
     test('should cache static data with ID', async () => {
       const staticData = { type_id: 597, name: 'Rifter' }
       mockRedis.setex.mockResolvedValue('OK')
-      
+
       const result = await setCachedStaticData('ship_types', staticData, 597)
       expect(result).toBe(true)
       expect(mockRedis.setex).toHaveBeenCalledWith(
-        'eve_cortex:static:ship_types:597', 
-        CACHE_TTL.STATIC_DATA, 
+        'eve_cortex:static:ship_types:597',
+        CACHE_TTL.STATIC_DATA,
         JSON.stringify(staticData)
       )
     })
@@ -348,7 +349,7 @@ describe('Redis Cache System', () => {
     test('should retrieve cached static data', async () => {
       const staticData = { types: [], groups: [] }
       mockRedis.get.mockResolvedValue(JSON.stringify(staticData))
-      
+
       const result = await getCachedStaticData('ship_types')
       expect(result).toEqual(staticData)
       expect(mockRedis.get).toHaveBeenCalledWith('eve_cortex:static:ship_types')
@@ -357,24 +358,25 @@ describe('Redis Cache System', () => {
 
   describe('Cache Statistics', () => {
     test('should get cache statistics', async () => {
-      const mockInfo = 'redis_version:7.0.0\r\nconnected_clients:1\r\nused_memory_human:1.2M\r\nuptime_in_seconds:3600\r\n'
+      const mockInfo =
+        'redis_version:7.0.0\r\nconnected_clients:1\r\nused_memory_human:1.2M\r\nuptime_in_seconds:3600\r\n'
       mockRedis.info.mockResolvedValue(mockInfo)
       mockRedis.ping.mockResolvedValue('PONG')
       mockRedis.dbsize.mockResolvedValue(1000)
-      
+
       const result = await getCacheStats()
       expect(result).toEqual({
         connected: true,
         key_count: 1000,
         memory_usage: '1.2M',
         uptime: '3600',
-        connected_clients: '1'
+        connected_clients: '1',
       })
     })
 
     test('should handle cache statistics error', async () => {
       mockRedis.ping.mockRejectedValue(new Error('Connection failed'))
-      
+
       const result = await getCacheStats()
       expect(result).toBeNull()
     })
@@ -389,10 +391,10 @@ describe('Redis Cache System', () => {
     test('should handle cache warming error', async () => {
       // Mock a function that might fail during warming
       const consoleSpy = jest.spyOn(console, 'error').mockImplementation()
-      
+
       const result = await warmCache(123)
       expect(result).toBe(true) // Should still return true even if some operations fail
-      
+
       consoleSpy.mockRestore()
     })
   })
@@ -400,21 +402,21 @@ describe('Redis Cache System', () => {
   describe('Error Handling', () => {
     test('should handle Redis connection errors gracefully', async () => {
       mockRedis.get.mockRejectedValue(new Error('Connection failed'))
-      
+
       const result = await getCached('test:key')
       expect(result).toBeNull()
     })
 
     test('should handle set operation errors gracefully', async () => {
       mockRedis.setex.mockRejectedValue(new Error('Connection failed'))
-      
+
       const result = await setCached('test:key', { test: 'value' })
       expect(result).toBe(false)
     })
 
     test('should handle delete operation errors gracefully', async () => {
       mockRedis.del.mockRejectedValue(new Error('Connection failed'))
-      
+
       const result = await deleteCached('test:key')
       expect(result).toBe(false)
     })

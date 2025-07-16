@@ -59,9 +59,7 @@ async function setupBranchProtection() {
     const protectionData = {
       required_status_checks: {
         strict: true,
-        contexts: [
-          'CI/CD Pipeline',
-        ],
+        contexts: ['CI/CD Pipeline'],
       },
       enforce_admins: false,
       required_pull_request_reviews: {

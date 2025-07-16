@@ -6,7 +6,8 @@
 import postgres from 'postgres'
 
 // Database connection configuration
-const DATABASE_URL = process.env['DATABASE_URL'] || 'postgresql://postgres:postgres@localhost:5432/eve_cortex'
+const DATABASE_URL =
+  process.env['DATABASE_URL'] || 'postgresql://postgres:postgres@localhost:5432/eve_cortex'
 
 // Connection options
 const connectionOptions = {
@@ -63,10 +64,8 @@ export async function executeQuery<T>(
 }
 
 // Transaction wrapper
-export async function withTransaction<T>(
-  callback: (sql: any) => Promise<T>
-): Promise<T> {
-  return await sql.begin(callback) as T
+export async function withTransaction<T>(callback: (sql: any) => Promise<T>): Promise<T> {
+  return (await sql.begin(callback)) as T
 }
 
 // Close database connection
@@ -100,11 +99,7 @@ export class DatabaseError extends Error {
 export function handleDatabaseError(error: unknown): never {
   if (error && typeof error === 'object' && 'code' in error) {
     const dbError = error as { code: string; message: string; detail?: string }
-    throw new DatabaseError(
-      dbError.message,
-      dbError.code,
-      dbError.detail
-    )
+    throw new DatabaseError(dbError.message, dbError.code, dbError.detail)
   }
   throw error
 }
@@ -115,21 +110,21 @@ export const queries = {
   findCharacterByEveId: (eveId: number) => sql`
     SELECT * FROM characters WHERE eve_character_id = ${eveId}
   `,
-  
+
   // Skill queries
   getCharacterSkills: (characterId: number) => sql`
     SELECT * FROM character_skills 
     WHERE character_id = ${characterId}
     ORDER BY skill_type_id
   `,
-  
+
   // Fitting queries
   getFittingsByCharacter: (characterId: number) => sql`
     SELECT * FROM fittings 
     WHERE character_id = ${characterId}
     ORDER BY updated_at DESC
   `,
-  
+
   // Skill plan queries
   getActiveSkillPlans: (characterId: number) => sql`
     SELECT * FROM skill_plans 

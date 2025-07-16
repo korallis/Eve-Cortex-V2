@@ -19,7 +19,7 @@ export class CharacterRepository extends BaseRepository<Character> {
         SELECT * FROM characters 
         WHERE eve_character_id = ${eveCharacterId}
       `
-      return result[0] as Character || null
+      return (result[0] as Character) || null
     } catch (error) {
       console.error('Error finding character by EVE character ID:', error)
       throw error
@@ -71,7 +71,7 @@ export class CharacterRepository extends BaseRepository<Character> {
         WHERE id = ${characterId}
         RETURNING *
       `
-      return result[0] as Character || null
+      return (result[0] as Character) || null
     } catch (error) {
       console.error('Error updating wallet balance:', error)
       throw error
@@ -81,7 +81,11 @@ export class CharacterRepository extends BaseRepository<Character> {
   /**
    * Update character location
    */
-  async updateLocation(characterId: number, locationId: number, locationName: string): Promise<Character | null> {
+  async updateLocation(
+    characterId: number,
+    locationId: number,
+    locationName: string
+  ): Promise<Character | null> {
     try {
       const result = await sql`
         UPDATE characters 
@@ -89,7 +93,7 @@ export class CharacterRepository extends BaseRepository<Character> {
         WHERE id = ${characterId}
         RETURNING *
       `
-      return result[0] as Character || null
+      return (result[0] as Character) || null
     } catch (error) {
       console.error('Error updating character location:', error)
       throw error
@@ -107,7 +111,7 @@ export class CharacterRepository extends BaseRepository<Character> {
         WHERE id = ${characterId}
         RETURNING *
       `
-      return result[0] as Character || null
+      return (result[0] as Character) || null
     } catch (error) {
       console.error('Error updating last login:', error)
       throw error
@@ -129,14 +133,14 @@ export class CharacterRepository extends BaseRepository<Character> {
           COUNT(DISTINCT alliance_id) as unique_alliances
         FROM characters
       `
-      
+
       return {
         totalCharacters: parseInt(result[0]?.['total_characters'] || '0'),
         activeCharacters: parseInt(result[0]?.['active_characters'] || '0'),
         averageWalletBalance: parseFloat(result[0]?.['average_wallet_balance'] || '0'),
         richestCharacter: parseFloat(result[0]?.['richest_character'] || '0'),
         uniqueCorporations: parseInt(result[0]?.['unique_corporations'] || '0'),
-        uniqueAlliances: parseInt(result[0]?.['unique_alliances'] || '0')
+        uniqueAlliances: parseInt(result[0]?.['unique_alliances'] || '0'),
       }
     } catch (error) {
       console.error('Error getting character statistics:', error)

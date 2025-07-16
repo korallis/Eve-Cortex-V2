@@ -19,7 +19,7 @@ export async function checkDatabaseHealth(): Promise<DatabaseHealth> {
         version() as version,
         NOW() as current_time
     `
-    
+
     // Get connection pool information
     const poolInfo = await sql`
       SELECT 
@@ -27,25 +27,25 @@ export async function checkDatabaseHealth(): Promise<DatabaseHealth> {
       FROM pg_stat_activity 
       WHERE datname = current_database()
     `
-    
+
     return {
       isHealthy: true,
       database: result[0]?.['database'] || 'unknown',
       user: result[0]?.['user'] || 'unknown',
       version: result[0]?.['version'] || 'unknown',
       currentTime: result[0]?.['current_time'] || new Date(),
-      connectionCount: parseInt(poolInfo[0]?.['connection_count'] || '0') || 0
+      connectionCount: parseInt(poolInfo[0]?.['connection_count'] || '0') || 0,
     }
   } catch (error) {
     console.error('Database health check failed:', error)
-    
+
     return {
       isHealthy: false,
       database: 'unknown',
       user: 'unknown',
       version: 'unknown',
       currentTime: new Date(),
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     }
   }
 }
@@ -67,22 +67,25 @@ export async function checkTableStructure() {
         AND table_name IN ('characters', 'character_skills', 'fittings', 'skill_plans', 'migrations')
       ORDER BY table_name, ordinal_position
     `
-    
+
     // Group by table name
-    const tableStructure = tables.reduce((acc, row) => {
-      const tableName = row['table_name'] as string
-      if (!acc[tableName]) {
-        acc[tableName] = []
-      }
-      acc[tableName].push({
-        column: row['column_name'],
-        type: row['data_type'],
-        nullable: row['is_nullable'] === 'YES',
-        default: row['column_default']
-      })
-      return acc
-    }, {} as Record<string, unknown[]>)
-    
+    const tableStructure = tables.reduce(
+      (acc, row) => {
+        const tableName = row['table_name'] as string
+        if (!acc[tableName]) {
+          acc[tableName] = []
+        }
+        acc[tableName].push({
+          column: row['column_name'],
+          type: row['data_type'],
+          nullable: row['is_nullable'] === 'YES',
+          default: row['column_default'],
+        })
+        return acc
+      },
+      {} as Record<string, unknown[]>
+    )
+
     return tableStructure
   } catch (error) {
     console.error('Error checking table structure:', error)
@@ -106,7 +109,7 @@ export async function checkIndexes() {
         AND tablename IN ('characters', 'character_skills', 'fittings', 'skill_plans')
       ORDER BY tablename, indexname
     `
-    
+
     return indexes
   } catch (error) {
     console.error('Error checking indexes:', error)
@@ -128,14 +131,14 @@ export async function getDatabaseStats() {
         (SELECT COUNT(*) FROM migrations) as migration_count,
         (SELECT pg_database_size(current_database())) as database_size
     `
-    
+
     return {
       characterCount: parseInt(stats[0]?.['character_count'] || '0') || 0,
       skillCount: parseInt(stats[0]?.['skill_count'] || '0') || 0,
       fittingCount: parseInt(stats[0]?.['fitting_count'] || '0') || 0,
       skillPlanCount: parseInt(stats[0]?.['skill_plan_count'] || '0') || 0,
       migrationCount: parseInt(stats[0]?.['migration_count'] || '0') || 0,
-      databaseSize: parseInt(stats[0]?.['database_size'] || '0') || 0
+      databaseSize: parseInt(stats[0]?.['database_size'] || '0') || 0,
     }
   } catch (error) {
     console.error('Error getting database stats:', error)
@@ -149,21 +152,21 @@ export async function getDatabaseStats() {
 export async function performanceTest() {
   try {
     const startTime = Date.now()
-    
+
     // Simple query performance test
     await sql`SELECT 1`
-    
+
     const queryTime = Date.now() - startTime
-    
+
     // Connection test
     const connectionStart = Date.now()
     await sql`SELECT NOW()`
     const connectionTime = Date.now() - connectionStart
-    
+
     return {
       queryLatency: queryTime,
       connectionLatency: connectionTime,
-      timestamp: new Date()
+      timestamp: new Date(),
     }
   } catch (error) {
     console.error('Error performing performance test:', error)
@@ -187,7 +190,7 @@ export async function checkLongRunningQueries() {
         AND state = 'active'
       ORDER BY duration DESC
     `
-    
+
     return queries
   } catch (error) {
     console.error('Error checking long-running queries:', error)
@@ -207,7 +210,7 @@ export async function getMigrationStatus() {
       FROM migrations
       ORDER BY executed_at DESC
     `
-    
+
     return migrations
   } catch (error) {
     console.error('Error getting migration status:', error)
@@ -220,16 +223,17 @@ export async function getMigrationStatus() {
  */
 export async function runDatabaseDiagnostics() {
   try {
-    const [health, structure, indexes, stats, performance, longQueries, migrations] = await Promise.all([
-      checkDatabaseHealth(),
-      checkTableStructure(),
-      checkIndexes(),
-      getDatabaseStats(),
-      performanceTest(),
-      checkLongRunningQueries(),
-      getMigrationStatus()
-    ])
-    
+    const [health, structure, indexes, stats, performance, longQueries, migrations] =
+      await Promise.all([
+        checkDatabaseHealth(),
+        checkTableStructure(),
+        checkIndexes(),
+        getDatabaseStats(),
+        performanceTest(),
+        checkLongRunningQueries(),
+        getMigrationStatus(),
+      ])
+
     return {
       health,
       structure,
@@ -238,7 +242,7 @@ export async function runDatabaseDiagnostics() {
       performance,
       longQueries,
       migrations,
-      timestamp: new Date()
+      timestamp: new Date(),
     }
   } catch (error) {
     console.error('Error running database diagnostics:', error)

@@ -43,15 +43,12 @@ export class CacheMonitor {
   // Perform comprehensive health check
   async performHealthCheck(): Promise<CacheHealthCheck> {
     const startTime = Date.now()
-    
+
     try {
-      const [connected, stats] = await Promise.all([
-        checkRedisHealth(),
-        getCacheStats()
-      ])
+      const [connected, stats] = await Promise.all([checkRedisHealth(), getCacheStats()])
 
       const responseTime = Date.now() - startTime
-      
+
       const healthCheck: CacheHealthCheck = {
         service: 'redis-cache',
         status: this.determineHealthStatus(connected, responseTime, stats),
@@ -63,12 +60,11 @@ export class CacheMonitor {
           uptime: stats?.uptime || 'unknown',
           connected_clients: stats?.connected_clients || 'unknown',
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       }
 
       this.addToHealthHistory(healthCheck)
       return healthCheck
-
     } catch (error) {
       const responseTime = Date.now() - startTime
       const healthCheck: CacheHealthCheck = {
@@ -81,9 +77,9 @@ export class CacheMonitor {
           memory_usage: 'unknown',
           uptime: 'unknown',
           connected_clients: 'unknown',
-          last_error: error instanceof Error ? error.message : 'Unknown error'
+          last_error: error instanceof Error ? error.message : 'Unknown error',
         },
-        timestamp: new Date()
+        timestamp: new Date(),
       }
 
       this.addToHealthHistory(healthCheck)
@@ -93,25 +89,25 @@ export class CacheMonitor {
 
   // Determine health status based on metrics
   private determineHealthStatus(
-    connected: boolean, 
-    responseTime: number, 
+    connected: boolean,
+    responseTime: number,
     stats: any
   ): 'healthy' | 'unhealthy' | 'degraded' {
     if (!connected) return 'unhealthy'
-    
+
     // Consider degraded if response time > 1000ms
     if (responseTime > 1000) return 'degraded'
-    
+
     // Consider degraded if memory usage is very high (this is a simplified check)
     if (stats?.key_count > 1000000) return 'degraded'
-    
+
     return 'healthy'
   }
 
   // Add health check to history
   private addToHealthHistory(healthCheck: CacheHealthCheck): void {
     this.healthHistory.push(healthCheck)
-    
+
     // Keep only the last N health checks
     if (this.healthHistory.length > this.maxHistorySize) {
       this.healthHistory.shift()
@@ -135,7 +131,7 @@ export class CacheMonitor {
       const info = await redis.info('stats')
       const lines = info.split('\n')
       const stats = {} as Record<string, string>
-      
+
       lines.forEach(line => {
         if (line.includes(':')) {
           const [key, value] = line.split(':')
@@ -159,12 +155,11 @@ export class CacheMonitor {
         connections_received: parseInt(stats['total_connections_received'] || '0'),
         expired_keys: parseInt(stats['expired_keys'] || '0'),
         evicted_keys: parseInt(stats['evicted_keys'] || '0'),
-        timestamp: new Date()
+        timestamp: new Date(),
       }
 
       this.addToPerformanceHistory(metrics)
       return metrics
-
     } catch (error) {
       console.error('Failed to collect performance metrics:', error)
       throw error
@@ -174,7 +169,7 @@ export class CacheMonitor {
   // Add performance metrics to history
   private addToPerformanceHistory(metrics: CachePerformanceMetrics): void {
     this.performanceHistory.push(metrics)
-    
+
     // Keep only the last N performance records
     if (this.performanceHistory.length > this.maxHistorySize) {
       this.performanceHistory.shift()
@@ -202,7 +197,7 @@ export class CacheMonitor {
   async getMonitoringSummary() {
     const [healthCheck, performanceMetrics] = await Promise.all([
       this.performHealthCheck(),
-      this.collectPerformanceMetrics()
+      this.collectPerformanceMetrics(),
     ])
 
     return {
@@ -214,8 +209,8 @@ export class CacheMonitor {
         memory_usage: healthCheck.details.memory_usage,
         uptime: healthCheck.details.uptime,
         total_keys: healthCheck.details.key_count,
-        response_time: healthCheck.response_time
-      }
+        response_time: healthCheck.response_time,
+      },
     }
   }
 }
@@ -247,13 +242,14 @@ export async function getDetailedHealthReport() {
 export async function optimizeCache(): Promise<void> {
   try {
     console.log('Starting cache optimization...')
-    
+
     // Get current memory usage
     const info = await getRedisInfo()
     console.log(`Current memory usage: ${info?.used_memory_human || 'unknown'}`)
-    
+
     // Remove expired keys (this is automatic in Redis, but can be forced)
-    await redis.eval(`
+    await redis.eval(
+      `
       local keys = redis.call('keys', 'eve_cortex:*')
       local expired = 0
       for i=1, #keys do
@@ -263,8 +259,10 @@ export async function optimizeCache(): Promise<void> {
         end
       end
       return expired
-    `, 0)
-    
+    `,
+      0
+    )
+
     console.log('Cache optimization completed')
   } catch (error) {
     console.error('Failed to optimize cache:', error)
@@ -275,27 +273,26 @@ export async function optimizeCache(): Promise<void> {
 export async function validateCacheIntegrity(): Promise<boolean> {
   try {
     console.log('Validating cache integrity...')
-    
+
     // Test basic operations
     const testKey = 'eve_cortex:health_check:test'
     const testValue = { test: true, timestamp: Date.now() }
-    
+
     // Test write
     await redis.setex(testKey, 10, JSON.stringify(testValue))
-    
+
     // Test read
     const retrieved = await redis.get(testKey)
     const parsed = JSON.parse(retrieved || '{}')
-    
+
     // Test delete
     await redis.del(testKey)
-    
+
     // Verify the test worked
     const isValid = parsed.test === true && typeof parsed.timestamp === 'number'
-    
+
     console.log(`Cache integrity validation: ${isValid ? 'PASSED' : 'FAILED'}`)
     return isValid
-    
   } catch (error) {
     console.error('Cache integrity validation failed:', error)
     return false

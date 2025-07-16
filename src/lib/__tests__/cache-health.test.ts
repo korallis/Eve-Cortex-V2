@@ -3,13 +3,13 @@
  * Test suite for cache health monitoring and performance metrics
  */
 
-import { 
-  CacheMonitor, 
-  cacheMonitor, 
-  performQuickHealthCheck, 
-  getDetailedHealthReport, 
-  optimizeCache, 
-  validateCacheIntegrity 
+import {
+  CacheMonitor,
+  cacheMonitor,
+  performQuickHealthCheck,
+  getDetailedHealthReport,
+  optimizeCache,
+  validateCacheIntegrity,
 } from '../cache-health'
 
 import { checkRedisHealth, getRedisInfo, getCacheStats } from '../redis'
@@ -45,14 +45,14 @@ describe('Cache Health Monitoring', () => {
           redis_version: '7.0.0',
           connected_clients: '1',
           used_memory_human: '1.2M',
-          uptime_in_seconds: '3600'
+          uptime_in_seconds: '3600',
         })
         ;(getCacheStats as jest.Mock).mockResolvedValue({
           connected: true,
           key_count: 1000,
           memory_usage: '1.2M',
           uptime: '3600',
-          connected_clients: '1'
+          connected_clients: '1',
         })
 
         const result = await monitor.performHealthCheck()
@@ -90,14 +90,14 @@ describe('Cache Health Monitoring', () => {
           redis_version: '7.0.0',
           connected_clients: '1',
           used_memory_human: '1.2M',
-          uptime_in_seconds: '3600'
+          uptime_in_seconds: '3600',
         })
         ;(getCacheStats as jest.Mock).mockResolvedValue({
           connected: true,
           key_count: 1000,
           memory_usage: '1.2M',
           uptime: '3600',
-          connected_clients: '1'
+          connected_clients: '1',
         })
 
         const result = await monitor.performHealthCheck()
@@ -124,7 +124,7 @@ describe('Cache Health Monitoring', () => {
           key_count: 1000,
           memory_usage: '1.2M',
           uptime: '3600',
-          connected_clients: '1'
+          connected_clients: '1',
         })
 
         await monitor.performHealthCheck()
@@ -144,7 +144,7 @@ describe('Cache Health Monitoring', () => {
           key_count: 1000,
           memory_usage: '1.2M',
           uptime: '3600',
-          connected_clients: '1'
+          connected_clients: '1',
         })
 
         // Add more than the max history size (100)
@@ -164,7 +164,7 @@ describe('Cache Health Monitoring', () => {
           key_count: 1000,
           memory_usage: '1.2M',
           uptime: '3600',
-          connected_clients: '1'
+          connected_clients: '1',
         })
 
         const latestBeforeCheck = monitor.getLatestHealthStatus()
@@ -179,8 +179,9 @@ describe('Cache Health Monitoring', () => {
 
     describe('Performance Metrics', () => {
       test('should collect performance metrics successfully', async () => {
-        const mockStatsInfo = 'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\nused_memory_peak:1048576\r\ntotal_connections_received:10\r\nexpired_keys:5\r\nevicted_keys:2\r\n'
-        
+        const mockStatsInfo =
+          'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\nused_memory_peak:1048576\r\ntotal_connections_received:10\r\nexpired_keys:5\r\nevicted_keys:2\r\n'
+
         const mockRedis = require('../redis').redis
         mockRedis.info.mockResolvedValue(mockStatsInfo)
 
@@ -197,8 +198,9 @@ describe('Cache Health Monitoring', () => {
       })
 
       test('should handle zero keyspace operations', async () => {
-        const mockStatsInfo = 'total_commands_processed:1000\r\nkeyspace_hits:0\r\nkeyspace_misses:0\r\n'
-        
+        const mockStatsInfo =
+          'total_commands_processed:1000\r\nkeyspace_hits:0\r\nkeyspace_misses:0\r\n'
+
         const mockRedis = require('../redis').redis
         mockRedis.info.mockResolvedValue(mockStatsInfo)
 
@@ -217,8 +219,9 @@ describe('Cache Health Monitoring', () => {
       })
 
       test('should maintain performance metrics history', async () => {
-        const mockStatsInfo = 'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
-        
+        const mockStatsInfo =
+          'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
+
         const mockRedis = require('../redis').redis
         mockRedis.info.mockResolvedValue(mockStatsInfo)
 
@@ -230,8 +233,9 @@ describe('Cache Health Monitoring', () => {
       })
 
       test('should get latest performance metrics', async () => {
-        const mockStatsInfo = 'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
-        
+        const mockStatsInfo =
+          'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
+
         const mockRedis = require('../redis').redis
         mockRedis.info.mockResolvedValue(mockStatsInfo)
 
@@ -254,10 +258,11 @@ describe('Cache Health Monitoring', () => {
           key_count: 1000,
           memory_usage: '1.2M',
           uptime: '3600',
-          connected_clients: '1'
+          connected_clients: '1',
         })
 
-        const mockStatsInfo = 'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
+        const mockStatsInfo =
+          'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
         const mockRedis = require('../redis').redis
         mockRedis.info.mockResolvedValue(mockStatsInfo)
 
@@ -281,10 +286,11 @@ describe('Cache Health Monitoring', () => {
           key_count: 1000,
           memory_usage: '1.2M',
           uptime: '3600',
-          connected_clients: '1'
+          connected_clients: '1',
         })
 
-        const mockStatsInfo = 'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
+        const mockStatsInfo =
+          'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
         const mockRedis = require('../redis').redis
         mockRedis.info.mockResolvedValue(mockStatsInfo)
 
@@ -311,7 +317,7 @@ describe('Cache Health Monitoring', () => {
         key_count: 1000,
         memory_usage: '1.2M',
         uptime: '3600',
-        connected_clients: '1'
+        connected_clients: '1',
       })
 
       const result = await performQuickHealthCheck()
@@ -333,10 +339,11 @@ describe('Cache Health Monitoring', () => {
         key_count: 1000,
         memory_usage: '1.2M',
         uptime: '3600',
-        connected_clients: '1'
+        connected_clients: '1',
       })
 
-      const mockStatsInfo = 'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
+      const mockStatsInfo =
+        'total_commands_processed:1000\r\nkeyspace_hits:800\r\nkeyspace_misses:200\r\n'
       const mockRedis = require('../redis').redis
       mockRedis.info.mockResolvedValue(mockStatsInfo)
 
@@ -356,7 +363,7 @@ describe('Cache Health Monitoring', () => {
 
     test('should optimize cache', async () => {
       ;(getRedisInfo as jest.Mock).mockResolvedValue({
-        used_memory_human: '1.2M'
+        used_memory_human: '1.2M',
       })
 
       const mockRedis = require('../redis').redis

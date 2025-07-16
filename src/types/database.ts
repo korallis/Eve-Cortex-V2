@@ -101,7 +101,7 @@ export interface TrainingQueueItem {
 }
 
 // Career path types
-export type CareerPath = 
+export type CareerPath =
   | 'missions'
   | 'pvp'
   | 'mining'
