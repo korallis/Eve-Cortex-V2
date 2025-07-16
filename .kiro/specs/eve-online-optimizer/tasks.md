@@ -96,7 +96,7 @@
 
 ## Core Optimization Engine
 
-- [ ] 11. Implement Dogma calculation system
+- [x] 11. Implement Dogma calculation system
   - Create EVE Static Data Export (SDE) integration
   - Implement ship attribute calculation engine
   - Add character skill bonus calculations
