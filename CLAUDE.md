@@ -272,15 +272,64 @@ export function formatCurrency(amount: number, options?: FormatOptions): string 
 
 ---
 
-## USAGE INSTRUCTIONS
+## MANDATORY TASK EXECUTION WORKFLOW
+
+**CRITICAL: This workflow MUST be followed for EVERY task execution without exception.**
+
+### Pre-Task Context Loading (REQUIRED)
+Before executing ANY task, you MUST read ALL of these files to have complete context:
+
+1. **Read ALL Steering Files** (in this exact order):
+   - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/product.md`
+   - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/structure.md`
+   - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/tech.md`
+   - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/terminal.md`
+
+2. **Read ALL Spec Files** (in this exact order):
+   - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/requirements.md`
+   - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/design.md`
+   - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
+
+### Task Execution Protocol (MANDATORY)
+1. **Check Dev Server Status**
+   - Run `ps aux | grep "next dev"` to check if dev server is running
+   - If running, kill it: `pkill -f "next dev"`
+   - Only then proceed with task execution
+
+2. **Execute Task with Full Context**
+   - Work directly from the tasks.md file
+   - NEVER create local task lists or use TodoWrite tool
+   - NEVER work from memory or assumptions
+   - Use the complete context from all files read above
+
+3. **Update Progress in tasks.md**
+   - Mark task as `[x]` completed directly in tasks.md
+   - NEVER use local task tracking systems
+   - tasks.md is the SINGLE SOURCE OF TRUTH for progress
+
+4. **Create Pull Request**
+   - Once task is marked complete in tasks.md, IMMEDIATELY create a PR
+   - Use the automated workflow: `npm run task:complete`
+   - PR title should match the completed task
+
+### VIOLATIONS THAT ARE FORBIDDEN
+- ❌ Using TodoWrite tool for task tracking
+- ❌ Creating local task lists
+- ❌ Working without reading all context files first
+- ❌ Not checking dev server status
+- ❌ Not creating PR after task completion
+- ❌ Working from memory instead of tasks.md
+
+### USAGE INSTRUCTIONS
 
 When working on any task for the Eve-Cortex project:
 
-1. **Reference this context** for project understanding, technical constraints, and brand guidelines
-2. **Follow the established patterns** for code organization, naming, and styling
-3. **Adhere to the technology stack** specified in the steering guidance
-4. **Maintain brand consistency** using the defined colors, typography, and visual style
-5. **Use the common commands** for development, testing, and quality checks
-6. **Follow the Git workflow** for branching, commits, and pull requests
+1. **ALWAYS follow the Mandatory Task Execution Workflow above**
+2. **Reference this context** for project understanding, technical constraints, and brand guidelines
+3. **Follow the established patterns** for code organization, naming, and styling
+4. **Adhere to the technology stack** specified in the steering guidance
+5. **Maintain brand consistency** using the defined colors, typography, and visual style
+6. **Use the common commands** for development, testing, and quality checks
+7. **Follow the Git workflow** for branching, commits, and pull requests
 
-This comprehensive context ensures consistent, high-quality development that aligns with the Eve-Cortex project's goals, technical requirements, and brand identity.
+This comprehensive context and mandatory workflow ensures consistent, high-quality development that aligns with the Eve-Cortex project's goals, technical requirements, and brand identity.
