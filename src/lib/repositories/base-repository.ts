@@ -170,18 +170,17 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
    */
   async count(where?: Record<string, unknown>): Promise<number> {
     try {
-      let query = sql`SELECT COUNT(*) as total FROM ${sql(this.tableName)}`
-      
       if (where) {
         // Simple where clause - would need more sophisticated handling for complex queries
         const firstCondition = Object.entries(where)[0]
         if (firstCondition) {
           const [key, value] = firstCondition
-          query = sql`SELECT COUNT(*) as total FROM ${sql(this.tableName)} WHERE ${sql(key)} = ${value}`
+          const result = await sql`SELECT COUNT(*) as total FROM ${sql(this.tableName)} WHERE ${sql(key)} = ${value as string | number | boolean}`
+          return parseInt(result[0]?.['total'] || '0')
         }
       }
       
-      const result = await query
+      const result = await sql`SELECT COUNT(*) as total FROM ${sql(this.tableName)}`
       return parseInt(result[0]?.['total'] || '0')
     } catch (error) {
       console.error(`Error counting ${this.tableName}:`, error)
