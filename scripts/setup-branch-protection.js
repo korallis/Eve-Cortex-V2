@@ -55,24 +55,24 @@ async function setupBranchProtection() {
 
     // Configure branch protection using GitHub API
     console.log('⚙️ Applying branch protection rules...')
-    
+
     const protectionData = {
       required_status_checks: {
         strict: true,
         contexts: [
           'Security & Dependency Audit',
-          'Code Quality', 
+          'Code Quality',
           'Tests',
           'Build Test',
-          'License Compliance'
-        ]
+          'License Compliance',
+        ],
       },
       enforce_admins: false,
       required_pull_request_reviews: {
         required_approving_review_count: 1,
         dismiss_stale_reviews: true,
         require_code_owner_reviews: false,
-        require_last_push_approval: true
+        require_last_push_approval: true,
       },
       restrictions: null,
       allow_force_pushes: false,
@@ -80,14 +80,14 @@ async function setupBranchProtection() {
       block_creations: false,
       required_conversation_resolution: true,
       lock_branch: false,
-      allow_fork_syncing: true
+      allow_fork_syncing: true,
     }
 
     // Write protection data to temp file
     const fs = require('fs')
     const tempFile = '/tmp/branch-protection.json'
     fs.writeFileSync(tempFile, JSON.stringify(protectionData, null, 2))
-    
+
     const protectionCommand = `gh api repos/${owner.login}/${name}/branches/main/protection --method PUT --input ${tempFile}`
     execSync(protectionCommand, { stdio: 'inherit' })
 

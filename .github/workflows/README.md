@@ -1,323 +1,290 @@
-# CI/CD Pipeline Documentation
+# Claude Bot - Automated Development Workflow
 
-This directory contains the GitHub Actions workflows for the Eve-Cortex project, implementing a comprehensive CI/CD pipeline with automated quality gates, security scanning, and dependency management.
+This repository uses Claude Bot for automated development workflows, including task completion, dependency management, and pull request automation.
 
-## Workflows Overview
+## 🤖 How It Works
 
-### 🔄 Main CI/CD Pipeline (`ci.yml`)
+### 1. Task Completion Workflow
 
-The primary workflow that runs on every pull request and push to main branch.
+When you complete a task, Claude Bot automatically:
+- ✅ Creates a feature branch
+- 🔍 Analyzes code for deprecated dependencies and security issues
+- 🔧 Auto-fixes common problems (linting, formatting, dependency updates)
+- 🧪 Runs comprehensive quality checks
+- 📝 Creates a pull request with detailed analysis
+- 🚀 Enables auto-merge for successful PRs
 
-**Triggers:**
+### 2. Continuous Integration
 
-- Pull requests to `main` branch
-- Pushes to `main` branch
-- Weekly schedule (Mondays at 9 AM UTC)
+For every pull request, Claude Bot:
+- 🔒 Runs security and dependency audits
+- 📦 Auto-fixes deprecated dependencies and vulnerabilities
+- 🧹 Validates code quality (ESLint, Prettier, TypeScript)
+- 🧪 Runs comprehensive test suite with coverage
+- 🏗️ Builds the application
+- 📄 Checks license compliance
+- 💬 Comments on PR with detailed results
 
-**Quality Gates:**
+### 3. Auto-merge
 
-1. **Security & Dependency Audit**
-   - npm security audit
-   - Deprecated dependency detection
-   - Unused dependency check
-   - Package validation
+PRs are automatically merged when:
+- ✅ All quality gates pass
+- 🏷️ Labeled with `claude-bot` or `auto-merge`
+- 🤖 Created by Claude Bot workflow
+- 🔒 No security vulnerabilities detected
 
-2. **Code Quality**
-   - ESLint linting
-   - Prettier formatting check
-   - TypeScript compilation
+## 🚀 Usage
 
-3. **Testing**
-   - Database migration testing
-   - Database seeding testing
-   - Unit tests with coverage
-   - PostgreSQL and Redis services
-
-4. **Build Verification**
-   - Next.js build test
-   - Build output validation
-
-5. **License Compliance**
-   - License compatibility check
-   - GPL/AGPL detection
-
-6. **Auto-merge**
-   - Automatic PR merging for approved changes
-   - Smart approval detection
-   - Comprehensive status reporting
-
-### 🔒 Security Scanning (`security.yml`)
-
-Dedicated security workflow for vulnerability detection.
-
-**Features:**
-
-- Daily security scans
-- Snyk integration
-- Dependency review for PRs
-- Automated issue creation for vulnerabilities
-
-### 📦 Dependency Management (`dependency-updates.yml`)
-
-Automated dependency update system.
-
-**Features:**
-
-- Weekly dependency updates
-- Security vulnerability fixes
-- Major version update notifications
-- Comprehensive dependency reporting
-
-## Auto-merge Strategy
-
-The pipeline implements intelligent auto-merge with the following rules:
-
-### ✅ Auto-merge Enabled For:
-
-- **Dependabot PRs**: Automatic approval after all checks pass
-- **Owner PRs**: Auto-merge for repository owner (@korallis)
-- **Labeled PRs**: PRs with `auto-merge` label
-
-### 🔍 Quality Gates Required:
-
-All PRs must pass these checks before auto-merge:
-
-- Security audit (no moderate+ vulnerabilities)
-- Code quality (ESLint, Prettier, TypeScript)
-- Database operations (migrations, seeding)
-- Unit tests (80%+ coverage required)
-- Build verification
-- License compliance
-
-### 👥 Approval Requirements:
-
-- **Dependabot**: No manual approval required
-- **Owner**: No manual approval required
-- **Others**: Requires 1 approving review
-
-## Branch Protection
-
-The pipeline enforces branch protection rules:
+### Trigger Task Completion Workflow
 
 ```bash
-# Setup branch protection
-npm run github:setup-protection
+# Via GitHub Actions UI
+# 1. Go to Actions tab
+# 2. Select "Claude Bot - Automated Development Workflow"
+# 3. Click "Run workflow"
+# 4. Enter task description
+# 5. Optionally specify branch name
 
-# Check protection status
-npm run github:protection-status
+# Or via GitHub CLI
+gh workflow run claude-bot.yml -f task_description="Add user authentication" -f branch_name="feature/auth"
 ```
 
-### Protection Rules:
-
-- All status checks must pass
-- Require PR reviews (1 approving review)
-- Dismiss stale reviews
-- Require conversation resolution
-- No force pushes allowed
-- No branch deletions allowed
-
-## Database Testing
-
-The CI pipeline includes comprehensive database testing:
-
-### Services:
-
-- **PostgreSQL 15**: Primary database
-- **Redis 7**: Caching and sessions
-
-### Database Tests:
-
-1. **Migration Testing**: Validates all database migrations
-2. **Seeding Testing**: Tests data seeding functionality
-3. **Integration Testing**: Tests with live database connections
-
-### Environment Variables:
+### Manual PR Creation
 
 ```bash
-DATABASE_URL=postgresql://postgres:postgres@localhost:5432/eve_cortex_test
-REDIS_URL=redis://localhost:6379
-NODE_ENV=test
+# Create feature branch
+git checkout -b feature/my-feature
+
+# Make your changes
+# ... code changes ...
+
+# Commit and push
+git add .
+git commit -m "feat: implement new feature"
+git push origin feature/my-feature
+
+# Claude Bot will automatically run CI/CD pipeline
 ```
 
-## Dependency Management
+## 🔧 Configuration
 
-### Automated Updates:
+### Environment Variables
 
-- **Weekly Schedule**: Every Monday at 9 AM UTC
-- **Security Updates**: Immediate fixes for vulnerabilities
-- **Minor/Patch**: Automatic updates with testing
-- **Major Updates**: Manual review required
+The workflow requires these environment variables:
 
-### Update Process:
+```env
+# GitHub token (automatically provided)
+GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
-1. Security vulnerability scan
-2. Minor/patch version updates
-3. Automated testing
-4. PR creation with detailed changelog
-5. Auto-merge if all tests pass
+# Optional: Additional tokens for enhanced security scanning
+SNYK_TOKEN=${{ secrets.SNYK_TOKEN }}
+CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}
+```
 
-### Manual Commands:
+### Branch Protection Rules
+
+Recommended branch protection settings for `main`:
+
+```yaml
+# .github/settings.yml (if using probot-settings)
+branches:
+  main:
+    protection:
+      required_status_checks:
+        strict: true
+        contexts:
+          - "CI/CD Pipeline"
+      enforce_admins: false
+      required_pull_request_reviews:
+        required_approving_review_count: 0
+        dismiss_stale_reviews: true
+        require_code_owner_reviews: false
+      restrictions: null
+      allow_force_pushes: false
+      allow_deletions: false
+```
+
+## 📊 Quality Gates
+
+### Security & Dependencies
+- 🔒 npm audit (moderate level)
+- 📦 Deprecated dependency detection
+- 🔄 Automatic dependency updates (minor/patch)
+- 📄 License compliance checking
+
+### Code Quality
+- 🧹 ESLint validation
+- 🎨 Prettier formatting
+- 🔧 TypeScript type checking
+- ✨ Auto-fixing of common issues
+
+### Testing & Build
+- 🧪 Jest unit tests with coverage
+- 🏗️ Next.js build validation
+- 🗃️ Database migration testing
+- 🌱 Database seeding verification
+
+## 🎯 Labels
+
+The workflow uses these labels:
+
+- `claude-bot` - PRs created by Claude Bot
+- `auto-merge` - PRs eligible for automatic merging
+- `dependencies` - Dependency-related changes
+- `security` - Security-related fixes
+- `automated` - Automated changes
+
+## 📈 Monitoring
+
+### Artifacts Generated
+- 📊 Test coverage reports
+- 🔍 Security audit results
+- 📋 Dependency analysis reports
+- 🏗️ Build artifacts
+
+### Notifications
+- 💬 PR comments with detailed results
+- 🚨 Issue creation for security vulnerabilities
+- ✅ Status checks on pull requests
+- 📧 Email notifications for failures
+
+## 🔄 Workflow Triggers
+
+### Automatic Triggers
+- `pull_request` to `main` branch
+- `push` to feature branches
+- `schedule` for periodic dependency checks
+
+### Manual Triggers
+- `workflow_dispatch` for task completion
+- GitHub Actions UI workflow runs
+- GitHub CLI workflow execution
+
+## 🛡️ Security
+
+### Dependency Management
+- Automatic security vulnerability fixes
+- Deprecated dependency updates
+- License compliance validation
+- Regular security audits
+
+### Code Protection
+- Branch protection rules
+- Required status checks
+- Automatic vulnerability detection
+- Secure token management
+
+## 🎨 Customization
+
+### Extending the Workflow
+
+To add custom checks:
+
+```yaml
+# Add to .github/workflows/claude-bot.yml
+- name: Custom Check
+  run: |
+    echo "Running custom validation..."
+    npm run custom-check
+```
+
+### Custom Labels
+
+Add custom labels in repository settings:
+
+```yaml
+# Additional labels for workflow management
+- name: "needs-review"
+  color: "yellow"
+- name: "breaking-change"
+  color: "red"
+- name: "enhancement"
+  color: "green"
+```
+
+## 📝 Best Practices
+
+### Task Descriptions
+- Use clear, descriptive task names
+- Include feature/fix/chore prefixes
+- Reference issue numbers when applicable
+
+### Branch Naming
+- Use descriptive branch names
+- Follow convention: `feature/`, `fix/`, `chore/`
+- Keep names concise but meaningful
+
+### Code Quality
+- Write comprehensive tests
+- Follow TypeScript best practices
+- Use ESLint and Prettier configurations
+- Document complex functionality
+
+## 🔍 Troubleshooting
+
+### Common Issues
+
+1. **Auto-merge Failed**
+   - Check branch protection rules
+   - Verify required approvals
+   - Ensure all status checks pass
+
+2. **Dependency Fixes Failed**
+   - Check for breaking changes
+   - Review package.json conflicts
+   - Verify npm registry access
+
+3. **Security Scan Failures**
+   - Review security audit results
+   - Update vulnerable dependencies
+   - Check for license conflicts
+
+### Debug Information
+
+Enable debug logging:
 
 ```bash
-# Check for updates
-npm run deps:check
-
-# Update dependencies
-npm run deps:update
-
-# Security audit
-npm run security:check
+# Add to workflow environment
+ACTIONS_STEP_DEBUG: true
+ACTIONS_RUNNER_DEBUG: true
 ```
 
-## Monitoring and Reporting
+## 🔧 Required Scripts
 
-### Artifacts Generated:
-
-- **Test Coverage Reports**: Uploaded to Codecov
-- **Security Audit Results**: 90-day retention
-- **Dependency Reports**: 30-day retention
-- **Build Artifacts**: For debugging failed builds
-
-### Notifications:
-
-- **Security Issues**: Automatic GitHub issues created
-- **Failed Builds**: PR comments with failure details
-- **Successful Merges**: Comprehensive status reports
-
-## Local Development
-
-### Required Scripts:
+Ensure your `package.json` includes these scripts:
 
 ```json
 {
-  "lint": "next lint",
-  "lint:fix": "next lint --fix",
-  "format": "prettier --write .",
-  "format:check": "prettier --check .",
-  "type-check": "tsc --noEmit",
-  "test": "jest",
-  "test:coverage": "jest --coverage",
-  "build": "next build",
-  "db:migrate": "node scripts/migrate.js",
-  "db:seed": "node scripts/seed.js"
+  "scripts": {
+    "lint": "next lint",
+    "lint:fix": "next lint --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "build": "next build",
+    "db:migrate": "node scripts/migrate.js",
+    "db:seed": "node scripts/seed.js"
+  }
 }
 ```
 
-### Pre-commit Hooks:
+## 🚀 Getting Started
 
-The project uses Husky for pre-commit quality checks:
+1. **Enable GitHub Actions** in your repository
+2. **Set up branch protection** for the main branch
+3. **Configure required environment variables**
+4. **Add necessary labels** to your repository
+5. **Test the workflow** by creating a sample PR
 
-- ESLint with auto-fix
-- Prettier formatting
-- TypeScript compilation check
-
-## Troubleshooting
-
-### Common Issues:
-
-#### 🔴 Security Audit Failures
+### Test Command
 
 ```bash
-# Fix security vulnerabilities
-npm audit fix
-npm audit fix --force  # If automatic fix fails
+# Test the workflow locally
+gh workflow run claude-bot.yml -f task_description="Test Claude Bot setup"
 ```
-
-#### 🔴 Code Quality Failures
-
-```bash
-# Fix linting issues
-npm run lint:fix
-
-# Fix formatting
-npm run format
-
-# Check TypeScript errors
-npm run type-check
-```
-
-#### 🔴 Test Failures
-
-```bash
-# Run tests locally
-npm test
-
-# Run with coverage
-npm run test:coverage
-
-# Test database operations
-npm run db:migrate
-npm run db:seed
-```
-
-#### 🔴 Build Failures
-
-```bash
-# Test build locally
-npm run build
-
-# Check environment variables
-cp .env.example .env.local
-# Edit .env.local with proper values
-```
-
-### Getting Help:
-
-1. **Check Workflow Logs**: Review the detailed logs in GitHub Actions
-2. **Review PR Comments**: Auto-generated comments explain failures
-3. **Run Locally**: Reproduce issues in local development
-4. **Check Dependencies**: Ensure all dependencies are up to date
-
-## Configuration Files
-
-### Workflow Configuration:
-
-- `.github/workflows/ci.yml` - Main CI/CD pipeline
-- `.github/workflows/security.yml` - Security scanning
-- `.github/workflows/dependency-updates.yml` - Dependency management
-- `.github/dependabot.yml` - Dependabot configuration
-
-### Scripts:
-
-- `scripts/migrate.js` - Database migration runner
-- `scripts/seed.js` - Database seeding
-- `scripts/setup-branch-protection.js` - Branch protection setup
-
-### Quality Tools:
-
-- `.eslintrc.json` - ESLint configuration
-- `.prettierrc` - Prettier configuration
-- `jest.config.js` - Jest testing configuration
-- `tsconfig.json` - TypeScript configuration
-
-## Best Practices
-
-### For Contributors:
-
-1. **Create Feature Branches**: Never commit directly to main
-2. **Write Tests**: Maintain 80%+ test coverage
-3. **Follow Code Style**: Use ESLint and Prettier
-4. **Update Dependencies**: Keep dependencies current
-5. **Security First**: Address security issues immediately
-
-### For Maintainers:
-
-1. **Review PRs Promptly**: Enable auto-merge for trusted changes
-2. **Monitor Security**: Address security alerts immediately
-3. **Update Documentation**: Keep CI/CD docs current
-4. **Performance Monitoring**: Watch for CI/CD performance issues
-
-## Metrics and KPIs
-
-The CI/CD pipeline tracks:
-
-- **Build Success Rate**: Target 95%+
-- **Test Coverage**: Minimum 80%
-- **Security Vulnerabilities**: Zero tolerance for high/critical
-- **Dependency Freshness**: Weekly updates
-- **PR Merge Time**: Automated for passing PRs
-- **Pipeline Duration**: Target <10 minutes
 
 ---
 
-_This documentation is automatically updated with pipeline changes._
+*This workflow is designed to streamline development while maintaining high code quality and security standards.*
