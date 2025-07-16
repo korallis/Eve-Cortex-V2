@@ -200,7 +200,7 @@ jobs:
   ci-cd:
     name: CI/CD Pipeline
     runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
+    if: github.event_name == 'pull_request' || github.event_name == 'pull_request_target'
 
     services:
       postgres:
@@ -302,7 +302,7 @@ jobs:
           NEXTAUTH_SECRET: test-secret
           EVE_CLIENT_ID: test-client-id
           EVE_CLIENT_SECRET: test-client-secret
-          DATABASE_URL: postgresql://test:test@localhost:5432/test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/eve_cortex_test
           REDIS_URL: redis://localhost:6379
 
       - name: Commit dependency fixes
@@ -359,9 +359,10 @@ jobs:
     runs-on: ubuntu-latest
     needs: ci-cd
     if: |
-      github.event_name == 'pull_request' &&
+      (github.event_name == 'pull_request' || github.event_name == 'pull_request_target') &&
       (contains(github.event.pull_request.labels.*.name, 'claude-bot') ||
-       contains(github.event.pull_request.labels.*.name, 'auto-merge'))
+       contains(github.event.pull_request.labels.*.name, 'auto-merge')) &&
+      github.event.pull_request.draft == false
 
     steps:
       - name: Checkout code
