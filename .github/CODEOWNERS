@@ -1,0 +1,34 @@
+# Global code owners
+* @korallis
+
+# CI/CD and GitHub Actions
+/.github/ @korallis
+/.github/workflows/ @korallis
+/.github/dependabot.yml @korallis
+
+# Package management and dependencies
+/package.json @korallis
+/package-lock.json @korallis
+/yarn.lock @korallis
+
+# Configuration files
+/.eslintrc* @korallis
+/.prettierrc* @korallis
+/tsconfig.json @korallis
+/next.config.js @korallis
+/tailwind.config.js @korallis
+/jest.config.js @korallis
+
+# Database and scripts
+/scripts/ @korallis
+/migrations/ @korallis
+
+# Security and environment
+/.env.example @korallis
+/SECURITY.md @korallis
+/DEPENDENCY_POLICY.md @korallis
+
+# Documentation
+/README.md @korallis
+/docs/ @korallis
+/.kiro/ @korallis

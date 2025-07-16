@@ -10,10 +10,6 @@ updates:
       time: '09:00'
       timezone: 'UTC'
     open-pull-requests-limit: 10
-    reviewers:
-      - 'korallis'
-    assignees:
-      - 'korallis'
     commit-message:
       prefix: 'chore'
       prefix-development: 'chore'
@@ -47,10 +43,6 @@ updates:
       time: '09:00'
       timezone: 'UTC'
     open-pull-requests-limit: 5
-    reviewers:
-      - 'korallis'
-    assignees:
-      - 'korallis'
     commit-message:
       prefix: 'ci'
       include: 'scope'
@@ -67,10 +59,6 @@ updates:
       time: '09:00'
       timezone: 'UTC'
     open-pull-requests-limit: 3
-    reviewers:
-      - 'korallis'
-    assignees:
-      - 'korallis'
     commit-message:
       prefix: 'docker'
       include: 'scope'
