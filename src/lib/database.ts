@@ -66,7 +66,7 @@ export async function executeQuery<T>(
 export async function withTransaction<T>(
   callback: (sql: any) => Promise<T>
 ): Promise<T> {
-  return await sql.begin(callback)
+  return await sql.begin(callback) as T
 }
 
 // Close database connection
