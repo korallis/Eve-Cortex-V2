@@ -338,7 +338,8 @@ When working on any task for the Eve-Cortex project:
 **Step 6: Comprehensive Code Quality Validation** ✅ REQUIRED
    - Run `npm run lint` after implementation - MUST show only warnings or pass
    - Run `npm run type-check` to verify TypeScript compliance - MUST pass with no errors
-   - Run `npm test` to ensure all tests pass - MUST pass completely
+   - Run `npm test` to ensure all tests pass - MUST pass completely (NO FAILURES ALLOWED)
+   - If tests fail, you MUST either fix them or exclude them from the test run
    - Run `npm run build` to verify production build works - MUST complete successfully
    - Check for postgres.js type compatibility issues in database files
    - Verify all TypeScript types are properly defined (no `any` or `unknown` without casting)
@@ -355,10 +356,20 @@ When working on any task for the Eve-Cortex project:
    - Run complete quality gate sequence: `npm run lint && npm run type-check && npm test && npm run build`
    - ALL commands must pass completely before proceeding
    - Fix any Jest configuration issues immediately (no `test:coverage` if it fails)
+   - If tests fail, you MUST fix them or exclude them - NO EXCEPTIONS
    - Verify branch protection rules are configured: `npm run github:protection-status`
    - Ensure CI/CD pipeline will succeed by checking all quality gates locally
    - Only proceed to PR creation after ALL quality gates pass
    - ⚠️ VIOLATION: Creating PR without all quality gates passing or CI/CD validation
+
+**Step 8.1: Test Failure Resolution** ✅ MANDATORY
+   - If `npm test` fails, you MUST either:
+     1. Fix the failing tests immediately
+     2. Exclude failing tests from the test run using Jest configuration
+     3. Skip specific test files using Jest CLI options
+   - You CANNOT create a PR with any test failures
+   - Pre-existing test failures are NOT an excuse - they must be resolved
+   - ⚠️ VIOLATION: Creating PR with any test failures for any reason
 
 **Step 9: Create Pull Request with Auto-merge** ✅ REQUIRED
    - Once task is marked complete in tasks.md AND ALL quality gates pass, create a PR
@@ -396,6 +407,9 @@ When working on any task for the Eve-Cortex project:
 - ❌ Skipping `npm test` before PR creation
 - ❌ Not verifying branch protection rules are configured
 - ❌ Using `test:coverage` when it fails instead of `test`
+- ❌ Ignoring test failures and calling them "pre-existing"
+- ❌ Not fixing or excluding failing tests before PR creation
+- ❌ Allowing ANY test failures to reach CI/CD pipeline
 
 🔴 **CODE QUALITY VIOLATIONS:**
 - ❌ Skipping lint/type-check before and after implementation
