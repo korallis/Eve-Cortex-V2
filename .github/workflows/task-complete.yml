@@ -1,0 +1,41 @@
+name: Complete Task
+
+on:
+  workflow_dispatch:
+    inputs:
+      task_number:
+        description: 'Task number to complete'
+        required: true
+        type: number
+      commit_message:
+        description: 'Commit message for the task'
+        required: true
+        type: string
+
+jobs:
+  complete-task:
+    name: Complete Task
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run task completion
+        run: |
+          node scripts/automated-task-completion.js \
+            --task ${{ github.event.inputs.task_number }} \
+            --message "${{ github.event.inputs.commit_message }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
