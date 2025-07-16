@@ -358,7 +358,9 @@ describe('Cache Health Monitoring', () => {
       ;(checkRedisHealth as jest.Mock).mockRejectedValue(new Error('Connection failed'))
 
       const result = await getDetailedHealthReport()
-      expect(result).toBeNull()
+      // The function should return an unhealthy status report, not null
+      expect(result).not.toBeNull()
+      expect(result?.health?.status).toBe('unhealthy')
     })
 
     test('should optimize cache', async () => {

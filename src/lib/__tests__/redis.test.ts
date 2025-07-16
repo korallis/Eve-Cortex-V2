@@ -376,6 +376,7 @@ describe('Redis Cache System', () => {
 
     test('should handle cache statistics error', async () => {
       mockRedis.ping.mockRejectedValue(new Error('Connection failed'))
+      mockRedis.dbsize.mockRejectedValue(new Error('Connection failed'))
 
       const result = await getCacheStats()
       expect(result).toBeNull()

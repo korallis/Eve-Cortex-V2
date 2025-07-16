@@ -30,7 +30,7 @@ describe('SignInForm', () => {
   it('renders sign in form correctly', () => {
     render(<SignInForm />)
     
-    expect(screen.getByText('Sign in with EVE Online')).toBeDefined()
+    expect(screen.getByRole('heading', { name: /sign in with eve online/i })).toBeDefined()
     expect(screen.getByText('Connect your EVE Online character to access personalized optimization')).toBeDefined()
     expect(screen.getByRole('button', { name: /sign in with eve online/i })).toBeDefined()
   })
