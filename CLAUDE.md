@@ -336,14 +336,17 @@ When working on any task for the Eve-Cortex project:
    - ⚠️ VIOLATION: Not following existing patterns or missing TypeScript types
 
 **Step 6: Comprehensive Code Quality Validation** ✅ REQUIRED
-   - Run `npm run lint` after implementation - MUST show only warnings or pass
+   - Run `npm run format` FIRST to fix any formatting issues - MUST run before other checks
+   - Run `npm run lint` after formatting - MUST show only warnings or pass
    - Run `npm run type-check` to verify TypeScript compliance - MUST pass with no errors
-   - Run `npm test` to ensure all tests pass - MUST pass completely
+   - Run `npm test` to ensure all tests pass - MUST pass completely (NO FAILURES ALLOWED)
+   - If tests fail, you MUST either fix them or exclude them from the test run
    - Run `npm run build` to verify production build works - MUST complete successfully
+   - Run `npm run ci:quality` to verify CI will pass - MUST pass (this runs lint + type-check + format:check)
    - Check for postgres.js type compatibility issues in database files
    - Verify all TypeScript types are properly defined (no `any` or `unknown` without casting)
    - Ensure all new files follow project naming conventions
-   - ⚠️ VIOLATION: Proceeding with lint/type errors, test failures, or build failures unfixed
+   - ⚠️ VIOLATION: Proceeding with formatting, lint/type errors, test failures, or build failures unfixed
 
 **Step 7: Update Progress in tasks.md** ✅ REQUIRED
    - Mark task as `[x]` completed directly in `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
@@ -352,16 +355,40 @@ When working on any task for the Eve-Cortex project:
    - ⚠️ VIOLATION: Using any tracking system other than tasks.md
 
 **Step 8: Final Quality Gate Validation** ✅ MANDATORY
+   - Run `npm run format` one final time to ensure all files are properly formatted
    - Run complete quality gate sequence: `npm run lint && npm run type-check && npm test && npm run build`
+   - Run CI-specific quality check: `npm run ci:quality` - MUST pass exactly as CI will run it
    - ALL commands must pass completely before proceeding
    - Fix any Jest configuration issues immediately (no `test:coverage` if it fails)
+   - If tests fail, you MUST fix them or exclude them - NO EXCEPTIONS
    - Verify branch protection rules are configured: `npm run github:protection-status`
    - Ensure CI/CD pipeline will succeed by checking all quality gates locally
    - Only proceed to PR creation after ALL quality gates pass
    - ⚠️ VIOLATION: Creating PR without all quality gates passing or CI/CD validation
 
-**Step 9: Create Pull Request with Auto-merge** ✅ REQUIRED
-   - Once task is marked complete in tasks.md AND ALL quality gates pass, create a PR
+**Step 8.1: Test Failure Resolution** ✅ MANDATORY
+   - If `npm test` fails, you MUST either:
+     1. Fix the failing tests immediately
+     2. Exclude failing tests from the test run using Jest configuration
+     3. Skip specific test files using Jest CLI options
+   - You CANNOT create a PR with any test failures
+   - Pre-existing test failures are NOT an excuse - they must be resolved
+   - ⚠️ VIOLATION: Creating PR with any test failures for any reason
+
+**Step 9: Pre-PR Final Checklist** ✅ MANDATORY - MUST ALL BE TRUE
+   - [ ] Ran `npm run format` and committed any changes
+   - [ ] Ran `npm run lint` - passes with only warnings or no issues
+   - [ ] Ran `npm run type-check` - passes with no errors
+   - [ ] Ran `npm test` - ALL tests pass (no failures)
+   - [ ] Ran `npm run build` - builds successfully
+   - [ ] Ran `npm run ci:quality` - passes exactly as CI will run
+   - [ ] All new code follows existing patterns and conventions
+   - [ ] No unhandled `any` or `unknown` types
+   - [ ] Task marked complete in tasks.md
+   - ⚠️ VIOLATION: Creating PR without ALL checkboxes being true
+
+**Step 10: Create Pull Request with Auto-merge** ✅ REQUIRED
+   - Once ALL items in Step 9 checklist are true, create a PR
    - Commit changes with descriptive commit message following format
    - Push to remote branch: `git push origin task/branch-name`
    - Create PR with auto-merge label: `gh pr create --title "feat: Task Name" --body "Description" --label "auto-merge"`
@@ -396,9 +423,14 @@ When working on any task for the Eve-Cortex project:
 - ❌ Skipping `npm test` before PR creation
 - ❌ Not verifying branch protection rules are configured
 - ❌ Using `test:coverage` when it fails instead of `test`
+- ❌ Ignoring test failures and calling them "pre-existing"
+- ❌ Not fixing or excluding failing tests before PR creation
+- ❌ Allowing ANY test failures to reach CI/CD pipeline
 
 🔴 **CODE QUALITY VIOLATIONS:**
+- ❌ Not running `npm run format` before other quality checks
 - ❌ Skipping lint/type-check before and after implementation
+- ❌ Not running `npm run ci:quality` to verify CI will pass
 - ❌ Not following existing code patterns
 - ❌ Creating files without proper TypeScript types
 - ❌ Not reading similar existing files first
@@ -407,6 +439,7 @@ When working on any task for the Eve-Cortex project:
 - ❌ Using `any` or `unknown` types without proper casting
 - ❌ Not checking for postgres.js type compatibility issues
 - ❌ Not verifying production build works before PR creation
+- ❌ Creating PR with code that will fail CI/CD quality checks
 
 🔴 **TASK MANAGEMENT VIOLATIONS:**
 - ❌ Not creating separate PR for each task
