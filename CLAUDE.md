@@ -283,4 +283,142 @@ When working on any task for the Eve-Cortex project:
 5. **Use the common commands** for development, testing, and quality checks
 6. **Follow the Git workflow** for branching, commits, and pull requests
 
-This comprehensive context ensures consistent, high-quality development that aligns with the Eve-Cortex project's goals, technical requirements, and brand identity.
+---
+
+## MANDATORY TASK EXECUTION WORKFLOW
+
+**CRITICAL: This workflow MUST be followed for EVERY task execution without exception.**
+
+**⚠️ ABSOLUTE COMPLIANCE REQUIRED ⚠️**
+- This workflow is MANDATORY and CANNOT be skipped or modified
+- ANY deviation from this workflow is a CRITICAL VIOLATION
+- ALL steps must be completed in the exact order specified
+- NO exceptions, shortcuts, or alternative approaches are permitted
+- Failure to follow this workflow will result in immediate task failure
+
+### Task Execution Protocol (MANDATORY)
+
+**🔒 EACH STEP IS MANDATORY AND MUST BE COMPLETED IN ORDER 🔒**
+
+**Step 1: Check Dev Server Status** ✅ REQUIRED
+   - Run `ps aux | grep "next dev"` to check if dev server is running
+   - If running, kill it: `pkill -f "next dev"`
+   - Only then proceed with task execution
+   - ⚠️ VIOLATION: Proceeding without checking dev server status
+
+**Step 2: Create Clean Task Branch** ✅ REQUIRED
+   - ALWAYS start from main branch: `git checkout main`
+   - Pull latest changes: `git pull origin main`
+   - Create task-specific branch: `git checkout -b task/descriptive-name`
+   - NEVER work on existing branches for new tasks
+   - ⚠️ VIOLATION: Working on existing branches or not starting from main
+
+**Step 3: Pre-Implementation Code Analysis** ✅ REQUIRED
+   - Run `npm run lint` to check current code quality
+   - Run `npm run type-check` to verify TypeScript status
+   - Check existing patterns in similar files before implementing new features
+   - Review imports and dependencies in related files
+   - ⚠️ VIOLATION: Skipping lint/type-check before implementation
+
+**Step 4: Execute Task with Full Context** ✅ REQUIRED
+   - Work directly from `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
+   - NEVER create local task lists or use TodoWrite tool
+   - NEVER work from memory or assumptions
+   - Follow existing code patterns and naming conventions
+   - ⚠️ VIOLATION: Using TodoWrite tool or working from memory
+
+**Step 5: Implementation Best Practices** ✅ REQUIRED
+   - Always read existing similar files first to understand patterns
+   - Use consistent TypeScript types and interfaces
+   - Follow the established import/export patterns
+   - Ensure proper error handling and logging
+   - Add comprehensive JSDoc comments for public APIs
+   - ⚠️ VIOLATION: Not following existing patterns or missing TypeScript types
+
+**Step 6: Code Quality Validation** ✅ REQUIRED
+   - Run `npm run lint` after implementation
+   - Run `npm run type-check` to verify TypeScript compliance
+   - Fix any linting or type errors before proceeding
+   - Ensure all new files follow project naming conventions
+   - ⚠️ VIOLATION: Proceeding with lint/type errors unfixed
+
+**Step 7: Update Progress in tasks.md** ✅ REQUIRED
+   - Mark task as `[x]` completed directly in `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
+   - NEVER use local task tracking systems
+   - tasks.md is the SINGLE SOURCE OF TRUTH for progress
+   - ⚠️ VIOLATION: Using any tracking system other than tasks.md
+
+**Step 8: Run Tests Before PR Creation** ✅ MANDATORY
+   - Run `npm test` to execute all tests
+   - Tests must PASS before creating PR
+   - Fix any test failures or configuration issues
+   - If Jest configuration errors exist, fix them immediately
+   - Only proceed to PR creation after all tests pass
+   - ⚠️ VIOLATION: Creating PR without running tests or when tests fail
+
+**Step 9: Create Pull Request** ✅ REQUIRED
+   - Once task is marked complete in tasks.md AND tests pass, create a PR
+   - Commit changes with descriptive commit message
+   - Push to remote branch: `git push origin task/branch-name`
+   - Create PR with gh CLI: `gh pr create --title "feat: Task Name" --body "Description"`
+   - Each task gets its own separate PR
+   - ⚠️ VIOLATION: Not creating PR after task completion or reusing branches
+
+### 🚨 CRITICAL VIOLATIONS - IMMEDIATE TASK FAILURE 🚨
+
+**ANY OF THESE VIOLATIONS WILL RESULT IN IMMEDIATE TASK FAILURE:**
+
+🔴 **BRANCHING VIOLATIONS:**
+- ❌ Not starting from main branch
+- ❌ Working on existing branches for new tasks
+- ❌ Not creating task-specific branches
+- ❌ Reusing branches across different tasks
+
+🔴 **WORKFLOW VIOLATIONS:**
+- ❌ Using TodoWrite tool for task tracking
+- ❌ Creating local task lists
+- ❌ Working without reading all context files first
+- ❌ Not checking dev server status
+- ❌ Skipping any step in the mandatory workflow
+- ❌ Completing steps out of order
+
+🔴 **TESTING VIOLATIONS:**
+- ❌ Creating PR without running tests first
+- ❌ Creating PR when tests are failing
+- ❌ Not fixing Jest configuration errors
+- ❌ Skipping `npm test` before PR creation
+
+🔴 **CODE QUALITY VIOLATIONS:**
+- ❌ Skipping lint/type-check before and after implementation
+- ❌ Not following existing code patterns
+- ❌ Creating files without proper TypeScript types
+- ❌ Not reading similar existing files first
+- ❌ Missing error handling or logging
+- ❌ Inconsistent naming conventions
+
+🔴 **TASK MANAGEMENT VIOLATIONS:**
+- ❌ Not creating separate PR for each task
+- ❌ Working from memory instead of tasks.md
+- ❌ Using any tracking system other than tasks.md
+- ❌ Not marking tasks as complete in tasks.md
+
+### ✅ MANDATORY DEVELOPMENT PRACTICES - NO EXCEPTIONS
+
+**🔒 BRANCH MANAGEMENT (MANDATORY):**
+- Start every task from main branch - REQUIRED
+- Create task-specific branches: `task/descriptive-name` - REQUIRED
+- Never reuse branches across different tasks - REQUIRED
+- Each task gets its own separate PR - REQUIRED
+
+**🔒 COMMAND EXECUTION SEQUENCE (MANDATORY):**
+1. `git checkout main && git pull origin main` - REQUIRED
+2. `git checkout -b task/name` - REQUIRED
+3. `npm run lint` (before starting) - REQUIRED
+4. `npm run type-check` (before starting) - REQUIRED
+5. Implement features following existing patterns - REQUIRED
+6. `npm run lint` (after implementation) - REQUIRED
+7. `npm run type-check` (after implementation) - REQUIRED
+8. `npm test` (mandatory before PR) - REQUIRED
+9. Create PR on separate branch - REQUIRED
+
+This comprehensive workflow ensures consistent, high-quality development that aligns with the Eve-Cortex project's goals, technical requirements, and brand identity while maintaining proper Git practices and code quality standards.
