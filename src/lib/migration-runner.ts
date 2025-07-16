@@ -55,7 +55,7 @@ export async function loadMigrations(migrationsDir: string): Promise<Migration[]
       
       // Extract version from filename (e.g., 001_create_users.sql -> 1)
       const versionMatch = filename.match(/^(\d+)_/)
-      const version = versionMatch ? parseInt(versionMatch[1]) : 0
+      const version = versionMatch ? parseInt(versionMatch[1] || '0') : 0
       
       migrations.push({
         filename,

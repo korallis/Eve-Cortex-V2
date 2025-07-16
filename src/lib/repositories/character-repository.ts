@@ -96,7 +96,7 @@ export class CharacterRepositoryImpl extends BaseRepository<Character> implement
         WHERE corporation_id = ${corporationId}
         ORDER BY name
       `
-      return result as Character[]
+      return result as unknown as Character[]
     } catch (error) {
       console.error('Error finding characters by corporation:', error)
       throw error
@@ -113,7 +113,7 @@ export class CharacterRepositoryImpl extends BaseRepository<Character> implement
         WHERE alliance_id = ${allianceId}
         ORDER BY name
       `
-      return result as Character[]
+      return result as unknown as Character[]
     } catch (error) {
       console.error('Error finding characters by alliance:', error)
       throw error
@@ -175,11 +175,11 @@ export class CharacterRepositoryImpl extends BaseRepository<Character> implement
       
       const stats = result[0]
       return {
-        totalSkills: parseInt(stats.total_skills) || 0,
-        totalSkillpoints: parseInt(stats.total_skillpoints) || 0,
-        averageSkillLevel: parseFloat(stats.average_skill_level) || 0,
-        totalFittings: parseInt(stats.total_fittings) || 0,
-        totalSkillPlans: parseInt(stats.total_skill_plans) || 0
+        totalSkills: parseInt(stats?.['total_skills']) || 0,
+        totalSkillpoints: parseInt(stats?.['total_skillpoints']) || 0,
+        averageSkillLevel: parseFloat(stats?.['average_skill_level']) || 0,
+        totalFittings: parseInt(stats?.['total_fittings']) || 0,
+        totalSkillPlans: parseInt(stats?.['total_skill_plans']) || 0
       }
     } catch (error) {
       console.error('Error getting character stats:', error)

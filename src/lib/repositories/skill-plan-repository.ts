@@ -20,7 +20,7 @@ export class SkillPlanRepositoryImpl extends BaseRepository<SkillPlan> implement
         WHERE character_id = ${characterId}
         ORDER BY priority DESC, created_at DESC
       `
-      return result as SkillPlan[]
+      return result as unknown as SkillPlan[]
     } catch (error) {
       console.error('Error finding skill plans by character ID:', error)
       throw error
@@ -37,7 +37,7 @@ export class SkillPlanRepositoryImpl extends BaseRepository<SkillPlan> implement
         WHERE character_id = ${characterId} AND is_active = TRUE
         ORDER BY priority DESC, created_at DESC
       `
-      return result as SkillPlan[]
+      return result as unknown as SkillPlan[]
     } catch (error) {
       console.error('Error finding active skill plans by character ID:', error)
       throw error
@@ -54,7 +54,7 @@ export class SkillPlanRepositoryImpl extends BaseRepository<SkillPlan> implement
         WHERE career_path = ${careerPath}
         ORDER BY priority DESC, created_at DESC
       `
-      return result as SkillPlan[]
+      return result as unknown as SkillPlan[]
     } catch (error) {
       console.error('Error finding skill plans by career path:', error)
       throw error
@@ -138,7 +138,7 @@ export class SkillPlanRepositoryImpl extends BaseRepository<SkillPlan> implement
           AND estimated_completion_time BETWEEN ${minTime} AND ${maxTime}
         ORDER BY estimated_completion_time ASC
       `
-      return result as SkillPlan[]
+      return result as unknown as SkillPlan[]
     } catch (error) {
       console.error('Error finding skill plans by completion time range:', error)
       throw error
@@ -201,20 +201,20 @@ export class SkillPlanRepositoryImpl extends BaseRepository<SkillPlan> implement
       
       const stats = result[0]
       return {
-        totalPlans: parseInt(stats.total_plans) || 0,
-        activePlans: parseInt(stats.active_plans) || 0,
-        completedPlans: parseInt(stats.completed_plans) || 0,
-        averageProgress: parseFloat(stats.average_progress) || 0,
+        totalPlans: parseInt(stats?.['total_plans']) || 0,
+        activePlans: parseInt(stats?.['active_plans']) || 0,
+        completedPlans: parseInt(stats?.['completed_plans']) || 0,
+        averageProgress: parseFloat(stats?.['average_progress']) || 0,
         plansByCareerPath: {
-          missions: parseInt(stats.missions) || 0,
-          pvp: parseInt(stats.pvp) || 0,
-          mining: parseInt(stats.mining) || 0,
-          exploration: parseInt(stats.exploration) || 0,
-          trading: parseInt(stats.trading) || 0,
-          industrial: parseInt(stats.industrial) || 0,
-          general: parseInt(stats.general) || 0
+          missions: parseInt(stats?.['missions']) || 0,
+          pvp: parseInt(stats?.['pvp']) || 0,
+          mining: parseInt(stats?.['mining']) || 0,
+          exploration: parseInt(stats?.['exploration']) || 0,
+          trading: parseInt(stats?.['trading']) || 0,
+          industrial: parseInt(stats?.['industrial']) || 0,
+          general: parseInt(stats?.['general']) || 0
         },
-        averageCompletionTime: parseFloat(stats.average_completion_time) || 0
+        averageCompletionTime: parseFloat(stats?.['average_completion_time']) || 0
       }
     } catch (error) {
       console.error('Error getting skill plan stats:', error)

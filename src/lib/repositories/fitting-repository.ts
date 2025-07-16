@@ -20,7 +20,7 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
         WHERE character_id = ${characterId}
         ORDER BY updated_at DESC
       `
-      return result as Fitting[]
+      return result as unknown as Fitting[]
     } catch (error) {
       console.error('Error finding fittings by character ID:', error)
       throw error
@@ -37,7 +37,7 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
         WHERE ship_type_id = ${shipTypeId}
         ORDER BY updated_at DESC
       `
-      return result as Fitting[]
+      return result as unknown as Fitting[]
     } catch (error) {
       console.error('Error finding fittings by ship type ID:', error)
       throw error
@@ -54,7 +54,7 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
         WHERE career_path = ${careerPath}
         ORDER BY updated_at DESC
       `
-      return result as Fitting[]
+      return result as unknown as Fitting[]
     } catch (error) {
       console.error('Error finding fittings by career path:', error)
       throw error
@@ -71,7 +71,7 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
         WHERE is_public = TRUE
         ORDER BY updated_at DESC
       `
-      return result as Fitting[]
+      return result as unknown as Fitting[]
     } catch (error) {
       console.error('Error finding public fittings:', error)
       throw error
@@ -88,7 +88,7 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
         WHERE tags && ${tags}
         ORDER BY updated_at DESC
       `
-      return result as Fitting[]
+      return result as unknown as Fitting[]
     } catch (error) {
       console.error('Error finding fittings by tags:', error)
       throw error
@@ -105,7 +105,7 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
         WHERE ship_type_id = ${shipTypeId} AND career_path = ${careerPath}
         ORDER BY updated_at DESC
       `
-      return result as Fitting[]
+      return result as unknown as Fitting[]
     } catch (error) {
       console.error('Error finding fittings by ship type and career:', error)
       throw error
@@ -122,7 +122,7 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
         WHERE name ILIKE ${'%' + searchTerm + '%'}
         ORDER BY updated_at DESC
       `
-      return result as Fitting[]
+      return result as unknown as Fitting[]
     } catch (error) {
       console.error('Error searching fittings by name:', error)
       throw error
@@ -187,22 +187,22 @@ export class FittingRepositoryImpl extends BaseRepository<Fitting> implements Fi
       
       const stats = result[0]
       return {
-        totalFittings: parseInt(stats.total_fittings) || 0,
-        publicFittings: parseInt(stats.public_fittings) || 0,
+        totalFittings: parseInt(stats?.['total_fittings']) || 0,
+        publicFittings: parseInt(stats?.['public_fittings']) || 0,
         fittingsByCareerPath: {
-          missions: parseInt(stats.missions) || 0,
-          pvp: parseInt(stats.pvp) || 0,
-          mining: parseInt(stats.mining) || 0,
-          exploration: parseInt(stats.exploration) || 0,
-          trading: parseInt(stats.trading) || 0,
-          industrial: parseInt(stats.industrial) || 0,
-          general: parseInt(stats.general) || 0
+          missions: parseInt(stats?.['missions']) || 0,
+          pvp: parseInt(stats?.['pvp']) || 0,
+          mining: parseInt(stats?.['mining']) || 0,
+          exploration: parseInt(stats?.['exploration']) || 0,
+          trading: parseInt(stats?.['trading']) || 0,
+          industrial: parseInt(stats?.['industrial']) || 0,
+          general: parseInt(stats?.['general']) || 0
         },
         averagePerformanceData: {
-          dps: parseFloat(stats.avg_dps) || 0,
-          ehp: parseFloat(stats.avg_ehp) || 0,
-          speed: parseFloat(stats.avg_speed) || 0,
-          cost: parseFloat(stats.avg_cost) || 0
+          dps: parseFloat(stats?.['avg_dps']) || 0,
+          ehp: parseFloat(stats?.['avg_ehp']) || 0,
+          speed: parseFloat(stats?.['avg_speed']) || 0,
+          cost: parseFloat(stats?.['avg_cost']) || 0
         }
       }
     } catch (error) {

@@ -20,7 +20,7 @@ export class CharacterSkillRepositoryImpl extends BaseRepository<CharacterSkill>
         WHERE character_id = ${characterId}
         ORDER BY skill_type_id
       `
-      return result as CharacterSkill[]
+      return result as unknown as CharacterSkill[]
     } catch (error) {
       console.error('Error finding skills by character ID:', error)
       throw error
@@ -37,7 +37,7 @@ export class CharacterSkillRepositoryImpl extends BaseRepository<CharacterSkill>
         WHERE skill_type_id = ${skillTypeId}
         ORDER BY character_id
       `
-      return result as CharacterSkill[]
+      return result as unknown as CharacterSkill[]
     } catch (error) {
       console.error('Error finding skills by skill type ID:', error)
       throw error
@@ -127,7 +127,7 @@ export class CharacterSkillRepositoryImpl extends BaseRepository<CharacterSkill>
         WHERE character_id = ${characterId} AND skill_type_id = ${skillTypeId}
       `
       
-      return result[0]?.trained_skill_level || 0
+      return result[0]?.['trained_skill_level'] || 0
     } catch (error) {
       console.error('Error getting skill level:', error)
       throw error
@@ -145,7 +145,7 @@ export class CharacterSkillRepositoryImpl extends BaseRepository<CharacterSkill>
         WHERE character_id = ${characterId}
       `
       
-      return parseInt(result[0]?.total_skillpoints) || 0
+      return parseInt(result[0]?.['total_skillpoints']) || 0
     } catch (error) {
       console.error('Error getting total skillpoints:', error)
       throw error
@@ -162,7 +162,7 @@ export class CharacterSkillRepositoryImpl extends BaseRepository<CharacterSkill>
         WHERE character_id = ${characterId} AND trained_skill_level >= ${minimumLevel}
         ORDER BY skill_type_id
       `
-      return result as CharacterSkill[]
+      return result as unknown as CharacterSkill[]
     } catch (error) {
       console.error('Error finding skills by minimum level:', error)
       throw error
@@ -208,17 +208,17 @@ export class CharacterSkillRepositoryImpl extends BaseRepository<CharacterSkill>
       
       const stats = result[0]
       return {
-        totalSkills: parseInt(stats.total_skills) || 0,
-        totalSkillpoints: parseInt(stats.total_skillpoints) || 0,
-        averageSkillLevel: parseFloat(stats.average_skill_level) || 0,
-        skillsAtMaxLevel: parseInt(stats.skills_at_max_level) || 0,
+        totalSkills: parseInt(stats?.['total_skills']) || 0,
+        totalSkillpoints: parseInt(stats?.['total_skillpoints']) || 0,
+        averageSkillLevel: parseFloat(stats?.['average_skill_level']) || 0,
+        skillsAtMaxLevel: parseInt(stats?.['skills_at_max_level']) || 0,
         distributionByLevel: {
-          0: parseInt(stats.level_0) || 0,
-          1: parseInt(stats.level_1) || 0,
-          2: parseInt(stats.level_2) || 0,
-          3: parseInt(stats.level_3) || 0,
-          4: parseInt(stats.level_4) || 0,
-          5: parseInt(stats.level_5) || 0
+          0: parseInt(stats?.['level_0']) || 0,
+          1: parseInt(stats?.['level_1']) || 0,
+          2: parseInt(stats?.['level_2']) || 0,
+          3: parseInt(stats?.['level_3']) || 0,
+          4: parseInt(stats?.['level_4']) || 0,
+          5: parseInt(stats?.['level_5']) || 0
         }
       }
     } catch (error) {

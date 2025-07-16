@@ -29,31 +29,15 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
    */
   async findAll(options: QueryOptions = {}): Promise<T[]> {
     try {
-      const { limit, offset, orderBy = 'id', orderDirection = 'ASC' } = options
+      const { limit = 100, offset = 0, orderBy = 'id', orderDirection = 'ASC' } = options
       
-      let query = sql`SELECT * FROM ${sql(this.tableName)}`
+      const result = await sql`
+        SELECT * FROM ${sql(this.tableName)}
+        ORDER BY ${sql(orderBy)} ${sql(orderDirection)}
+        LIMIT ${limit} OFFSET ${offset}
+      `
       
-      // Add WHERE clause if provided
-      if (options.where) {
-        const whereConditions = Object.entries(options.where).map(([key, value]) => 
-          sql`${sql(key)} = ${value}`
-        )
-        query = sql`${query} WHERE ${sql.join(whereConditions, ' AND ')}`
-      }
-      
-      // Add ORDER BY
-      query = sql`${query} ORDER BY ${sql(orderBy)} ${sql(orderDirection)}`
-      
-      // Add LIMIT and OFFSET
-      if (limit) {
-        query = sql`${query} LIMIT ${limit}`
-      }
-      if (offset) {
-        query = sql`${query} OFFSET ${offset}`
-      }
-      
-      const result = await query
-      return result as T[]
+      return result as unknown as T[]
     } catch (error) {
       console.error(`Error finding all ${this.tableName}:`, error)
       throw error
@@ -72,7 +56,7 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
       const countResult = await sql`
         SELECT COUNT(*) as total FROM ${sql(this.tableName)}
       `
-      const total = parseInt(countResult[0].total)
+      const total = parseInt(countResult[0]?.['total'] || '0')
       
       // Get paginated data
       const data = await this.findAll(options)
@@ -95,12 +79,18 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
    */
   async create(data: Omit<T, 'id' | 'created_at' | 'updated_at'>): Promise<T> {
     try {
-      const keys = Object.keys(data)
-      const values = Object.values(data)
+      const dataWithTimestamps = {
+        ...data,
+        created_at: new Date(),
+        updated_at: new Date()
+      }
+
+      const columns = Object.keys(dataWithTimestamps)
+      const values = Object.values(dataWithTimestamps)
       
       const result = await sql`
-        INSERT INTO ${sql(this.tableName)} (${sql.join(keys.map(k => sql(k)), ', ')})
-        VALUES (${sql.join(values, ', ')})
+        INSERT INTO ${sql(this.tableName)} (${sql(columns)})
+        VALUES (${sql(values)})
         RETURNING *
       `
       
@@ -116,15 +106,18 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
    */
   async update(id: number, data: Partial<T>): Promise<T> {
     try {
-      const updateData = { ...data, updated_at: new Date() }
-      const keys = Object.keys(updateData)
-      const setPairs = keys.map(key => 
-        sql`${sql(key)} = ${updateData[key as keyof typeof updateData]}`
-      )
-      
+      const dataWithTimestamp = {
+        ...data,
+        updated_at: new Date()
+      }
+
+      const setPairs = Object.entries(dataWithTimestamp)
+        .map(([key, value]) => `${key} = ${sql`${value}`}`)
+        .join(', ')
+
       const result = await sql`
         UPDATE ${sql(this.tableName)} 
-        SET ${sql.join(setPairs, ', ')}
+        SET ${sql(setPairs)}
         WHERE id = ${id}
         RETURNING *
       `
@@ -174,19 +167,10 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
   /**
    * Get count of records
    */
-  async count(where?: Record<string, any>): Promise<number> {
+  async count(): Promise<number> {
     try {
-      let query = sql`SELECT COUNT(*) as count FROM ${sql(this.tableName)}`
-      
-      if (where) {
-        const whereConditions = Object.entries(where).map(([key, value]) => 
-          sql`${sql(key)} = ${value}`
-        )
-        query = sql`${query} WHERE ${sql.join(whereConditions, ' AND ')}`
-      }
-      
-      const result = await query
-      return parseInt(result[0].count)
+      const result = await sql`SELECT COUNT(*) as count FROM ${sql(this.tableName)}`
+      return parseInt(result[0]?.['count'] || '0')
     } catch (error) {
       console.error(`Error counting ${this.tableName}:`, error)
       throw error
@@ -199,7 +183,7 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
   protected async executeQuery<R = any>(query: string, params: any[] = []): Promise<R[]> {
     try {
       const result = await sql.unsafe(query, params)
-      return result as R[]
+      return result as unknown as R[]
     } catch (error) {
       console.error(`Error executing query on ${this.tableName}:`, error)
       throw error
@@ -210,8 +194,8 @@ export abstract class BaseRepository<T extends DatabaseRecord> {
    * Execute within a transaction
    */
   protected async withTransaction<R>(
-    callback: (sql: typeof sql) => Promise<R>
+    callback: (sql: any) => Promise<R>
   ): Promise<R> {
-    return await sql.begin(callback)
+    return await sql.begin(callback) as unknown as R
   }
 }

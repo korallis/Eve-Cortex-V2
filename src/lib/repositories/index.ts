@@ -9,6 +9,12 @@ export { CharacterSkillRepositoryImpl, characterSkillRepository } from './charac
 export { FittingRepositoryImpl, fittingRepository } from './fitting-repository'
 export { SkillPlanRepositoryImpl, skillPlanRepository } from './skill-plan-repository'
 
+// Import repository instances
+import { characterRepository } from './character-repository'
+import { characterSkillRepository } from './character-skill-repository'
+import { fittingRepository } from './fitting-repository'
+import { skillPlanRepository } from './skill-plan-repository'
+
 // Export all repository instances for easy access
 export const repositories = {
   character: characterRepository,

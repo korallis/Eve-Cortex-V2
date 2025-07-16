@@ -55,7 +55,7 @@ export async function executeQuery<T>(
 ): Promise<T[]> {
   try {
     const result = await sql.unsafe(query, params)
-    return result as T[]
+    return result as unknown as T[]
   } catch (error) {
     console.error('Query execution failed:', error)
     throw error
@@ -64,9 +64,9 @@ export async function executeQuery<T>(
 
 // Transaction wrapper
 export async function withTransaction<T>(
-  callback: (sql: typeof import('postgres').Sql) => Promise<T>
+  callback: (sql: any) => Promise<T>
 ): Promise<T> {
-  return await sql.begin(callback) as T
+  return await sql.begin(callback) as unknown as T
 }
 
 // Close database connection
