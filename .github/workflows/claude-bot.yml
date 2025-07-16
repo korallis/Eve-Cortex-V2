@@ -23,63 +23,63 @@ jobs:
     name: Create Pull Request
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch'
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Create feature branch
         run: |
           BRANCH_NAME="${{ github.event.inputs.branch_name }}"
           if [ -z "$BRANCH_NAME" ]; then
             BRANCH_NAME="feature/$(echo '${{ github.event.inputs.task_description }}' | sed 's/[^a-zA-Z0-9]/-/g' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
           fi
-          
+
           echo "Creating branch: $BRANCH_NAME"
           git checkout -b "$BRANCH_NAME"
           echo "BRANCH_NAME=$BRANCH_NAME" >> $GITHUB_ENV
-      
+
       - name: Analyze code for issues
         run: |
           echo "🔍 Analyzing code for potential issues..."
-          
+
           # Check for deprecated dependencies
           echo "Checking for deprecated dependencies..."
           npx npm-check-updates --doctor --target minor > ncu-output.txt 2>&1 || true
-          
+
           # Check for security vulnerabilities
           echo "Checking for security vulnerabilities..."
           npm audit --audit-level=moderate > audit-output.txt 2>&1 || true
-          
+
           # Check for unused dependencies
           echo "Checking for unused dependencies..."
           npx depcheck --ignores="@types/*,eslint-config-*,prettier-plugin-*,husky,lint-staged" > depcheck-output.txt 2>&1 || true
-          
+
           # Store results for later use
           echo "ANALYSIS_COMPLETE=true" >> $GITHUB_ENV
-      
+
       - name: Fix deprecated dependencies
         run: |
           echo "🔧 Fixing deprecated dependencies..."
-          
+
           # Update minor and patch versions
           npx npm-check-updates --target minor --upgrade
-          
+
           # Install updated dependencies
           npm install
-          
+
           # Check if changes were made
           if git diff --quiet package.json package-lock.json; then
             echo "No dependency updates needed"
@@ -88,20 +88,20 @@ jobs:
             echo "Dependencies updated"
             echo "DEPS_UPDATED=true" >> $GITHUB_ENV
           fi
-      
+
       - name: Run quality checks
         run: |
           echo "🧪 Running quality checks..."
-          
+
           # Run linting
           npm run lint || echo "LINT_FAILED=true" >> $GITHUB_ENV
-          
+
           # Run type checking
           npm run type-check || echo "TYPE_CHECK_FAILED=true" >> $GITHUB_ENV
-          
+
           # Run tests
           npm test || echo "TESTS_FAILED=true" >> $GITHUB_ENV
-          
+
           # Run build
           npm run build || echo "BUILD_FAILED=true" >> $GITHUB_ENV
         env:
@@ -111,29 +111,29 @@ jobs:
           EVE_CLIENT_SECRET: test-client-secret
           DATABASE_URL: postgresql://test:test@localhost:5432/test
           REDIS_URL: redis://localhost:6379
-      
+
       - name: Auto-fix common issues
         run: |
           echo "🔧 Auto-fixing common issues..."
-          
+
           # Fix linting issues
           npm run lint:fix || true
-          
+
           # Fix formatting issues
           npm run format || true
-          
+
           # Re-run checks after fixes
           npm run lint || true
           npm run type-check || true
-      
+
       - name: Commit changes
         run: |
           git config --local user.email "claude-bot@anthropic.com"
           git config --local user.name "Claude Bot"
-          
+
           # Add all changes
           git add .
-          
+
           # Check if there are changes to commit
           if git diff --staged --quiet; then
             echo "No changes to commit"
@@ -151,13 +151,13 @@ jobs:
             
             echo "CHANGES_MADE=true" >> $GITHUB_ENV
           fi
-      
+
       - name: Push branch and create PR
         if: env.CHANGES_MADE == 'true'
         run: |
           # Push the branch
           git push origin "${{ env.BRANCH_NAME }}"
-          
+
           # Create PR with comprehensive description
           gh pr create \
             --title "🤖 ${{ github.event.inputs.task_description }}" \
@@ -190,7 +190,7 @@ jobs:
             --assignee "korallis"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: No changes notification
         if: env.CHANGES_MADE == 'false'
         run: |
@@ -201,7 +201,7 @@ jobs:
     name: CI/CD Pipeline
     runs-on: ubuntu-latest
     if: github.event_name == 'pull_request'
-    
+
     services:
       postgres:
         image: postgres:15
@@ -215,7 +215,7 @@ jobs:
           --health-retries 5
         ports:
           - 5432:5432
-      
+
       redis:
         image: redis:7
         options: >-
@@ -225,65 +225,65 @@ jobs:
           --health-retries 5
         ports:
           - 6379:6379
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
-      
+
       - name: Install dependencies
         run: npm ci
-      
+
       - name: Security and dependency audit
         run: |
           echo "🔒 Running security and dependency audit..."
-          
+
           # Security audit
           npm audit --audit-level=moderate || echo "SECURITY_ISSUES=true" >> $GITHUB_ENV
-          
+
           # Check for deprecated dependencies
           npx npm-check-updates --errorLevel 2 || echo "DEPRECATED_DEPS=true" >> $GITHUB_ENV
-          
+
           # License compliance
           npx license-checker --summary --excludePrivatePackages --failOn 'GPL;AGPL;LGPL;UNLICENSED' || echo "LICENSE_ISSUES=true" >> $GITHUB_ENV
-      
+
       - name: Auto-fix dependency issues
         if: env.SECURITY_ISSUES == 'true' || env.DEPRECATED_DEPS == 'true'
         run: |
           echo "🔧 Auto-fixing dependency issues..."
-          
+
           # Fix security vulnerabilities
           npm audit fix || true
-          
+
           # Update deprecated dependencies (minor/patch only)
           npx npm-check-updates --target minor --upgrade || true
           npm install || true
-          
+
           # Check if fixes were applied
           if git diff --quiet package.json package-lock.json; then
             echo "No dependency fixes needed"
           else
             echo "DEPENDENCY_FIXES_APPLIED=true" >> $GITHUB_ENV
           fi
-      
+
       - name: Code quality checks
         run: |
           echo "🧹 Running code quality checks..."
-          
+
           # ESLint
           npm run lint
-          
+
           # Prettier
           npm run format:check
-          
+
           # TypeScript
           npm run type-check
-      
+
       - name: Run tests
         run: |
           echo "🧪 Running tests..."
@@ -292,7 +292,7 @@ jobs:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/eve_cortex_test
           REDIS_URL: redis://localhost:6379
           NODE_ENV: test
-      
+
       - name: Build application
         run: |
           echo "🏗️ Building application..."
@@ -304,13 +304,13 @@ jobs:
           EVE_CLIENT_SECRET: test-client-secret
           DATABASE_URL: postgresql://test:test@localhost:5432/test
           REDIS_URL: redis://localhost:6379
-      
+
       - name: Commit dependency fixes
         if: env.DEPENDENCY_FIXES_APPLIED == 'true'
         run: |
           git config --local user.email "claude-bot@anthropic.com"
           git config --local user.name "Claude Bot"
-          
+
           git add package.json package-lock.json
           git commit -m "fix: auto-fix dependency issues
 
@@ -319,18 +319,18 @@ jobs:
           - All CI checks passing
 
           🤖 Auto-generated by Claude Bot"
-          
+
           git push origin HEAD
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Upload coverage reports
         uses: codecov/codecov-action@v4
         with:
           file: ./coverage/lcov.info
           flags: unittests
           name: codecov-umbrella
-      
+
       - name: Comment on PR with results
         run: |
           gh pr comment ${{ github.event.pull_request.number }} --body "## 🤖 Claude Bot - CI/CD Results
@@ -364,20 +364,20 @@ jobs:
       github.event_name == 'pull_request' &&
       (contains(github.event.pull_request.labels.*.name, 'claude-bot') ||
        contains(github.event.pull_request.labels.*.name, 'auto-merge'))
-    
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Enable auto-merge
         run: |
           echo "🤖 Enabling auto-merge for PR #${{ github.event.pull_request.number }}"
-          
+
           # Enable auto-merge with squash
           gh pr merge ${{ github.event.pull_request.number }} --auto --squash --delete-branch
-          
+
           # Add success comment
           gh pr comment ${{ github.event.pull_request.number }} --body "## 🎉 Auto-merge Enabled!
 
@@ -394,7 +394,7 @@ jobs:
           *Claude Bot has successfully completed the development workflow*"
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Handle auto-merge failure
         if: failure()
         run: |
