@@ -27,7 +27,8 @@ const ERROR_CONFIGS = {
   AccessDenied: {
     icon: Shield,
     title: 'Access Denied',
-    description: 'You do not have permission to access this resource. Please ensure you have the required EVE Online permissions.',
+    description:
+      'You do not have permission to access this resource. Please ensure you have the required EVE Online permissions.',
     action: 'Try Again',
     actionUrl: '/auth/signin',
     color: 'text-yellow-500',
@@ -37,7 +38,8 @@ const ERROR_CONFIGS = {
   Verification: {
     icon: Clock,
     title: 'Verification Failed',
-    description: 'The verification link is invalid or has expired. Please request a new sign-in link.',
+    description:
+      'The verification link is invalid or has expired. Please request a new sign-in link.',
     action: 'Sign In Again',
     actionUrl: '/auth/signin',
     color: 'text-orange-500',
@@ -47,7 +49,8 @@ const ERROR_CONFIGS = {
   OAuthSignin: {
     icon: AlertTriangle,
     title: 'OAuth Sign In Error',
-    description: 'There was an error constructing the authorization URL. This may be a temporary issue.',
+    description:
+      'There was an error constructing the authorization URL. This may be a temporary issue.',
     action: 'Try Again',
     actionUrl: '/auth/signin',
     color: 'text-red-500',
@@ -57,7 +60,8 @@ const ERROR_CONFIGS = {
   OAuthCallback: {
     icon: RefreshCw,
     title: 'OAuth Callback Error',
-    description: 'There was an error processing the response from EVE Online. Please try signing in again.',
+    description:
+      'There was an error processing the response from EVE Online. Please try signing in again.',
     action: 'Try Again',
     actionUrl: '/auth/signin',
     color: 'text-red-500',
@@ -67,7 +71,8 @@ const ERROR_CONFIGS = {
   OAuthCreateAccount: {
     icon: AlertTriangle,
     title: 'Account Creation Failed',
-    description: 'Could not create your account with the provided OAuth credentials. Please try again.',
+    description:
+      'Could not create your account with the provided OAuth credentials. Please try again.',
     action: 'Try Again',
     actionUrl: '/auth/signin',
     color: 'text-red-500',
@@ -77,7 +82,8 @@ const ERROR_CONFIGS = {
   OAuthAccountNotLinked: {
     icon: Shield,
     title: 'Account Already Linked',
-    description: 'This EVE Online account is already linked to another user. Please use a different account.',
+    description:
+      'This EVE Online account is already linked to another user. Please use a different account.',
     action: 'Use Different Account',
     actionUrl: '/auth/signin',
     color: 'text-yellow-500',
@@ -87,7 +93,8 @@ const ERROR_CONFIGS = {
   SessionRequired: {
     icon: Clock,
     title: 'Session Required',
-    description: 'You need to be signed in to access this page. Please sign in with your EVE Online character.',
+    description:
+      'You need to be signed in to access this page. Please sign in with your EVE Online character.',
     action: 'Sign In',
     actionUrl: '/auth/signin',
     color: 'text-blue-500',
@@ -112,42 +119,40 @@ export function AuthErrorDisplay({ error, message }: AuthErrorDisplayProps) {
 
   return (
     <div className="space-y-6">
-      <div className={`rounded-lg p-6 border ${config.bgColor} ${config.borderColor}`}>
+      <div className={`rounded-lg border p-6 ${config.bgColor} ${config.borderColor}`}>
         <div className="flex items-start gap-4">
           <div className={`flex-shrink-0 ${config.color}`}>
             <Icon className="h-6 w-6" />
           </div>
-          
+
           <div className="flex-1">
-            <h3 className={`text-lg font-semibold ${config.color}`}>
-              {config.title}
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">
+            <h3 className={`text-lg font-semibold ${config.color}`}>{config.title}</h3>
+            <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
               {message || config.description}
             </p>
           </div>
         </div>
       </div>
 
-      <div className="flex flex-col sm:flex-row gap-3">
+      <div className="flex flex-col gap-3 sm:flex-row">
         <Link
           href={config.actionUrl}
-          className="flex-1 inline-flex items-center justify-center rounded-md bg-cortex-blue px-6 py-3 text-white font-medium hover:bg-cortex-blue-dark transition-colors"
+          className="hover:bg-cortex-blue-dark inline-flex flex-1 items-center justify-center rounded-md bg-cortex-blue px-6 py-3 font-medium text-white transition-colors"
         >
           {config.action}
         </Link>
-        
+
         <Link
           href="/"
-          className="flex-1 inline-flex items-center justify-center rounded-md bg-dark-secondary px-6 py-3 text-white font-medium hover:bg-dark-secondary/80 border border-dark-border transition-colors"
+          className="border-dark-border inline-flex flex-1 items-center justify-center rounded-md border bg-dark-secondary px-6 py-3 font-medium text-white transition-colors hover:bg-dark-secondary/80"
         >
           Go Home
         </Link>
       </div>
 
-      <div className="rounded-lg bg-dark-secondary/50 p-4 border border-dark-border">
-        <h4 className="font-medium text-white mb-2">Troubleshooting Tips</h4>
-        <ul className="text-sm text-dark-secondary space-y-1">
+      <div className="border-dark-border rounded-lg border bg-dark-secondary/50 p-4">
+        <h4 className="mb-2 font-medium text-white">Troubleshooting Tips</h4>
+        <ul className="space-y-1 text-sm text-dark-secondary">
           <li>• Ensure your EVE Online account is active</li>
           <li>• Check that you're using the correct EVE Online character</li>
           <li>• Try clearing your browser cache and cookies</li>
@@ -157,10 +162,8 @@ export function AuthErrorDisplay({ error, message }: AuthErrorDisplayProps) {
       </div>
 
       {error && (
-        <div className="rounded-lg bg-dark-secondary/30 p-3 border border-dark-border">
-          <p className="text-xs text-dark-secondary font-mono">
-            Error Code: {error}
-          </p>
+        <div className="border-dark-border rounded-lg border bg-dark-secondary/30 p-3">
+          <p className="font-mono text-xs text-dark-secondary">Error Code: {error}</p>
         </div>
       )}
     </div>

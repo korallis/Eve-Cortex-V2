@@ -71,13 +71,19 @@ export const eveOnlineProvider = {
   },
   token: {
     url: `${EVE_OAUTH_URL}/token`,
-    async request({ client, params, checks, provider }: { client: any; params: any; checks: any; provider: any }) {
-      const response = await client.oauthCallback(
-        provider.callbackUrl,
-        params,
-        checks
-      )
-      
+    async request({
+      client,
+      params,
+      checks,
+      provider,
+    }: {
+      client: any
+      params: any
+      checks: any
+      provider: any
+    }) {
+      const response = await client.oauthCallback(provider.callbackUrl, params, checks)
+
       const tokens = {
         access_token: response.access_token,
         refresh_token: response.refresh_token,
@@ -85,7 +91,7 @@ export const eveOnlineProvider = {
         token_type: response.token_type || 'Bearer',
         scope: response.scope || ESI_SCOPES,
       }
-      
+
       return { tokens }
     },
   },
@@ -97,11 +103,11 @@ export const eveOnlineProvider = {
           Authorization: `Bearer ${tokens.access_token}`,
         },
       })
-      
+
       if (!response.ok) {
         throw new Error('Failed to fetch user info from EVE Online')
       }
-      
+
       return await response.json()
     },
   },
@@ -138,9 +144,9 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        Authorization: `Basic ${Buffer.from(
-          `${EVE_CLIENT_ID}:${EVE_CLIENT_SECRET}`
-        ).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(`${EVE_CLIENT_ID}:${EVE_CLIENT_SECRET}`).toString(
+          'base64'
+        )}`,
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
@@ -162,7 +168,7 @@ export async function refreshAccessToken(token: JWT): Promise<JWT> {
     }
   } catch (error) {
     console.error('Error refreshing access token:', error)
-    
+
     return {
       ...token,
       error: 'RefreshAccessTokenError',
@@ -242,9 +248,9 @@ export const authConfig: NextAuthConfig = {
         'esi-skills.read_skills.v1',
         'esi-location.read_location.v1',
       ]
-      
+
       const grantedScopes = (profile as any)['Scopes'] || ''
-      const hasRequiredScopes = requiredScopes.every(scope => 
+      const hasRequiredScopes = requiredScopes.every(scope =>
         (grantedScopes as string).includes(scope)
       )
 

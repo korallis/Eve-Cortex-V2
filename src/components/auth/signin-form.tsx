@@ -35,7 +35,7 @@ export function SignInForm({ callbackUrl, error }: SignInFormProps) {
 
   const handleSignIn = async () => {
     setIsLoading(true)
-    
+
     try {
       await signIn('eveonline', {
         callbackUrl: callbackUrl || '/dashboard',
@@ -47,38 +47,30 @@ export function SignInForm({ callbackUrl, error }: SignInFormProps) {
     }
   }
 
-  const errorMessage = error 
+  const errorMessage = error
     ? ERROR_MESSAGES[error as keyof typeof ERROR_MESSAGES] || ERROR_MESSAGES.Default
     : null
 
   return (
     <div className="space-y-6">
       {errorMessage && (
-        <div className="flex items-center gap-3 rounded-md bg-red-50 dark:bg-red-900/20 p-4 border border-red-200 dark:border-red-800">
+        <div className="flex items-center gap-3 rounded-md border border-red-200 bg-red-50 p-4 dark:border-red-800 dark:bg-red-900/20">
           <AlertCircle className="h-5 w-5 text-red-600 dark:text-red-400" />
-          <p className="text-sm text-red-600 dark:text-red-400">
-            {errorMessage}
-          </p>
+          <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
         </div>
       )}
 
-      <div className="rounded-lg bg-dark-secondary p-6 border border-dark-border">
-        <div className="text-center space-y-4">
-          <div className="mx-auto h-12 w-12 rounded-full bg-cortex-blue/20 flex items-center justify-center">
-            <svg
-              className="h-6 w-6 text-cortex-blue"
-              fill="currentColor"
-              viewBox="0 0 24 24"
-            >
+      <div className="border-dark-border rounded-lg border bg-dark-secondary p-6">
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-cortex-blue/20">
+            <svg className="h-6 w-6 text-cortex-blue" fill="currentColor" viewBox="0 0 24 24">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
             </svg>
           </div>
-          
+
           <div>
-            <h3 className="text-lg font-semibold text-white">
-              Sign in with EVE Online
-            </h3>
-            <p className="text-sm text-dark-secondary mt-1">
+            <h3 className="text-lg font-semibold text-white">Sign in with EVE Online</h3>
+            <p className="mt-1 text-sm text-dark-secondary">
               Connect your EVE Online character to access personalized optimization
             </p>
           </div>
@@ -86,11 +78,11 @@ export function SignInForm({ callbackUrl, error }: SignInFormProps) {
           <button
             onClick={handleSignIn}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-md bg-cortex-blue px-6 py-3 text-white font-medium hover:bg-cortex-blue-dark disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="hover:bg-cortex-blue-dark flex w-full items-center justify-center gap-3 rounded-md bg-cortex-blue px-6 py-3 font-medium text-white transition-colors disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? (
               <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -121,14 +113,14 @@ export function SignInForm({ callbackUrl, error }: SignInFormProps) {
 
       <div className="text-center">
         <p className="text-sm text-dark-secondary">
-          By signing in, you agree to share your character data with Eve-Cortex
-          to provide personalized optimization recommendations.
+          By signing in, you agree to share your character data with Eve-Cortex to provide
+          personalized optimization recommendations.
         </p>
       </div>
 
-      <div className="rounded-lg bg-dark-secondary/50 p-4 border border-dark-border">
-        <h4 className="font-medium text-white mb-2">Required Permissions</h4>
-        <ul className="text-sm text-dark-secondary space-y-1">
+      <div className="border-dark-border rounded-lg border bg-dark-secondary/50 p-4">
+        <h4 className="mb-2 font-medium text-white">Required Permissions</h4>
+        <ul className="space-y-1 text-sm text-dark-secondary">
           <li>• Character information and skills</li>
           <li>• Asset and wallet data</li>
           <li>• Market orders and history</li>

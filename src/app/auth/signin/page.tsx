@@ -13,7 +13,7 @@ export default async function SignInPage({
   searchParams?: Promise<{ callbackUrl?: string; error?: string }>
 }) {
   const session = await auth()
-  const params = await searchParams || {}
+  const params = (await searchParams) || {}
 
   // If user is already authenticated, redirect to dashboard or callback URL
   if (session) {
@@ -25,18 +25,13 @@ export default async function SignInPage({
       <div className="container mx-auto px-4 py-16">
         <div className="mx-auto max-w-md">
           <div className="text-center">
-            <h1 className="text-3xl font-bold text-white mb-2">
-              Welcome to Eve-Cortex
-            </h1>
-            <p className="text-dark-secondary mb-8">
+            <h1 className="mb-2 text-3xl font-bold text-white">Welcome to Eve-Cortex</h1>
+            <p className="mb-8 text-dark-secondary">
               Sign in with your EVE Online character to access AI-powered optimization
             </p>
           </div>
 
-          <SignInForm 
-            callbackUrl={params.callbackUrl} 
-            error={params.error}
-          />
+          <SignInForm callbackUrl={params.callbackUrl} error={params.error} />
         </div>
       </div>
     </div>

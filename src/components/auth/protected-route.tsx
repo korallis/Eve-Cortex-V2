@@ -16,18 +16,18 @@ interface ProtectedRouteProps {
   requireAnyScope?: boolean
 }
 
-export function ProtectedRoute({ 
-  children, 
+export function ProtectedRoute({
+  children,
   fallback,
   requiredScopes = [],
-  requireAnyScope = false
+  requireAnyScope = false,
 }: ProtectedRouteProps) {
   const { isLoading, isAuthenticated, hasAllScopes, hasAnyScope } = useAuth()
 
   // Show loading spinner while session is loading
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <LoadingSpinner size="large" />
       </div>
     )
@@ -35,39 +35,36 @@ export function ProtectedRoute({
 
   // If not authenticated, the useAuth hook will handle redirect
   if (!isAuthenticated) {
-    return fallback || (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-white mb-4">
-            Authentication Required
-          </h1>
-          <p className="text-dark-secondary">
-            Redirecting to sign in...
-          </p>
+    return (
+      fallback || (
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="text-center">
+            <h1 className="mb-4 text-2xl font-bold text-white">Authentication Required</h1>
+            <p className="text-dark-secondary">Redirecting to sign in...</p>
+          </div>
         </div>
-      </div>
+      )
     )
   }
 
   // Check required scopes if specified
   if (requiredScopes.length > 0) {
-    const hasRequiredScopes = requireAnyScope 
+    const hasRequiredScopes = requireAnyScope
       ? hasAnyScope(requiredScopes)
       : hasAllScopes(requiredScopes)
 
     if (!hasRequiredScopes) {
       return (
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center max-w-md">
-            <h1 className="text-2xl font-bold text-white mb-4">
-              Insufficient Permissions
-            </h1>
-            <p className="text-dark-secondary mb-6">
-              This feature requires additional ESI permissions. Please sign in again to grant the required access.
+        <div className="flex min-h-screen items-center justify-center">
+          <div className="max-w-md text-center">
+            <h1 className="mb-4 text-2xl font-bold text-white">Insufficient Permissions</h1>
+            <p className="mb-6 text-dark-secondary">
+              This feature requires additional ESI permissions. Please sign in again to grant the
+              required access.
             </p>
-            <div className="rounded-lg bg-dark-secondary/50 p-4 border border-dark-border">
-              <h4 className="font-medium text-white mb-2">Required Permissions:</h4>
-              <ul className="text-sm text-dark-secondary space-y-1">
+            <div className="border-dark-border rounded-lg border bg-dark-secondary/50 p-4">
+              <h4 className="mb-2 font-medium text-white">Required Permissions:</h4>
+              <ul className="space-y-1 text-sm text-dark-secondary">
                 {requiredScopes.map(scope => (
                   <li key={scope}>• {scope}</li>
                 ))}

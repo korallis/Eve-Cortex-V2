@@ -112,7 +112,7 @@ export async function refreshESIToken(refreshToken: string): Promise<ESIToken | 
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Authorization': `Basic ${Buffer.from(`${EVE_CLIENT_ID}:${EVE_CLIENT_SECRET}`).toString('base64')}`,
+        Authorization: `Basic ${Buffer.from(`${EVE_CLIENT_ID}:${EVE_CLIENT_SECRET}`).toString('base64')}`,
       },
       body: new URLSearchParams({
         grant_type: 'refresh_token',
@@ -130,7 +130,7 @@ export async function refreshESIToken(refreshToken: string): Promise<ESIToken | 
     return {
       access_token: tokenData.access_token,
       refresh_token: tokenData.refresh_token || refreshToken,
-      expires_at: Date.now() + (tokenData.expires_in * 1000),
+      expires_at: Date.now() + tokenData.expires_in * 1000,
       token_type: tokenData.token_type,
       scopes: tokenData.scope?.split(' ') || [],
     }
@@ -160,7 +160,7 @@ export async function makeESIRequest<T>(
     const response = await fetch(url, {
       ...options,
       headers: {
-        'Authorization': `Bearer ${token.access_token}`,
+        Authorization: `Bearer ${token.access_token}`,
         'Content-Type': 'application/json',
         'User-Agent': 'Eve-Cortex/1.0.0',
         ...options.headers,
@@ -192,7 +192,7 @@ export function getESIBaseUrl(version: string = 'latest'): string {
 export function formatScopeForDisplay(scope: string): string {
   // Remove the 'esi-' prefix and version suffix
   const cleanScope = scope.replace(/^esi-/, '').replace(/\.v\d+$/, '')
-  
+
   // Split by dots and capitalize each part
   return cleanScope
     .split('.')
@@ -240,7 +240,7 @@ export function extractCharacterIdFromToken(token: string): number | null {
   try {
     const parts = token.split('.')
     if (parts.length < 2 || !parts[1]) return null
-    
+
     const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString())
     const subParts = payload.sub?.split(':')
     return subParts && subParts[2] ? parseInt(subParts[2]) : null

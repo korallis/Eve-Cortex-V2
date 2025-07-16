@@ -20,7 +20,7 @@ export function SignOutForm({ session }: SignOutFormProps) {
 
   const handleSignOut = async () => {
     setIsLoading(true)
-    
+
     try {
       await signOut({
         callbackUrl: '/',
@@ -34,24 +34,22 @@ export function SignOutForm({ session }: SignOutFormProps) {
 
   if (!session) {
     return (
-      <div className="rounded-lg bg-dark-secondary p-6 border border-dark-border">
-        <div className="text-center space-y-4">
-          <div className="mx-auto h-12 w-12 rounded-full bg-neural-purple/20 flex items-center justify-center">
+      <div className="border-dark-border rounded-lg border bg-dark-secondary p-6">
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neural-purple/20">
             <User className="h-6 w-6 text-neural-purple" />
           </div>
-          
+
           <div>
-            <h3 className="text-lg font-semibold text-white">
-              Not signed in
-            </h3>
-            <p className="text-sm text-dark-secondary mt-1">
+            <h3 className="text-lg font-semibold text-white">Not signed in</h3>
+            <p className="mt-1 text-sm text-dark-secondary">
               You are not currently signed in to Eve-Cortex
             </p>
           </div>
 
           <Link
             href="/auth/signin"
-            className="inline-flex items-center justify-center gap-3 rounded-md bg-cortex-blue px-6 py-3 text-white font-medium hover:bg-cortex-blue-dark transition-colors"
+            className="hover:bg-cortex-blue-dark inline-flex items-center justify-center gap-3 rounded-md bg-cortex-blue px-6 py-3 font-medium text-white transition-colors"
           >
             Sign In
           </Link>
@@ -62,17 +60,17 @@ export function SignOutForm({ session }: SignOutFormProps) {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-lg bg-dark-secondary p-6 border border-dark-border">
-        <div className="text-center space-y-4">
-          <div className="mx-auto h-12 w-12 rounded-full bg-neural-purple/20 flex items-center justify-center">
+      <div className="border-dark-border rounded-lg border bg-dark-secondary p-6">
+        <div className="space-y-4 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-neural-purple/20">
             <User className="h-6 w-6 text-neural-purple" />
           </div>
-          
+
           <div>
             <h3 className="text-lg font-semibold text-white">
               {session.user?.name || 'EVE Online Character'}
             </h3>
-            <p className="text-sm text-dark-secondary mt-1">
+            <p className="mt-1 text-sm text-dark-secondary">
               Signed in as {session.user?.email || 'EVE Online pilot'}
             </p>
           </div>
@@ -80,11 +78,11 @@ export function SignOutForm({ session }: SignOutFormProps) {
           <button
             onClick={handleSignOut}
             disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 rounded-md bg-red-600 px-6 py-3 text-white font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="flex w-full items-center justify-center gap-3 rounded-md bg-red-600 px-6 py-3 font-medium text-white transition-colors hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {isLoading ? (
               <>
-                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
                   <circle
                     className="opacity-25"
                     cx="12"
@@ -114,15 +112,15 @@ export function SignOutForm({ session }: SignOutFormProps) {
       <div className="text-center">
         <Link
           href="/dashboard"
-          className="text-sm text-cortex-blue hover:text-cortex-blue-dark transition-colors"
+          className="hover:text-cortex-blue-dark text-sm text-cortex-blue transition-colors"
         >
           ← Back to Dashboard
         </Link>
       </div>
 
-      <div className="rounded-lg bg-dark-secondary/50 p-4 border border-dark-border">
-        <h4 className="font-medium text-white mb-2">What happens when you sign out?</h4>
-        <ul className="text-sm text-dark-secondary space-y-1">
+      <div className="border-dark-border rounded-lg border bg-dark-secondary/50 p-4">
+        <h4 className="mb-2 font-medium text-white">What happens when you sign out?</h4>
+        <ul className="space-y-1 text-sm text-dark-secondary">
           <li>• Your session will be terminated</li>
           <li>• Access tokens will be revoked</li>
           <li>• You'll be redirected to the homepage</li>

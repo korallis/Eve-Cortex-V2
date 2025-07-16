@@ -93,7 +93,11 @@ describe('useAuth', () => {
       user: {
         id: '1',
         name: 'Test Character',
-        scopes: ['esi-characters.read_character_info.v1', 'esi-skills.read_skills.v1', 'esi-skills.read_skillqueue.v1'],
+        scopes: [
+          'esi-characters.read_character_info.v1',
+          'esi-skills.read_skills.v1',
+          'esi-skills.read_skillqueue.v1',
+        ],
       },
       expires: '2024-12-31T23:59:59.999Z',
     }

@@ -29,26 +29,36 @@ describe('SignInForm', () => {
 
   it('renders sign in form correctly', () => {
     render(<SignInForm />)
-    
+
     expect(screen.getByRole('heading', { name: /sign in with eve online/i })).toBeDefined()
-    expect(screen.getByText('Connect your EVE Online character to access personalized optimization')).toBeDefined()
+    expect(
+      screen.getByText('Connect your EVE Online character to access personalized optimization')
+    ).toBeDefined()
     expect(screen.getByRole('button', { name: /sign in with eve online/i })).toBeDefined()
   })
 
   it('displays error message when error prop is provided', () => {
     render(<SignInForm error="AccessDenied" />)
-    
-    expect(screen.getByText('Access denied. Please make sure you have the required permissions.')).toBeDefined()
+
+    expect(
+      screen.getByText('Access denied. Please make sure you have the required permissions.')
+    ).toBeDefined()
   })
 
   it('calls signIn when button is clicked', async () => {
-    mockSignIn.mockResolvedValue({ error: undefined, status: 200, ok: true, url: null, code: '200' } as MockSignInResponse)
-    
+    mockSignIn.mockResolvedValue({
+      error: undefined,
+      status: 200,
+      ok: true,
+      url: null,
+      code: '200',
+    } as MockSignInResponse)
+
     render(<SignInForm />)
-    
+
     const signInButton = screen.getByRole('button', { name: /sign in with eve online/i })
     fireEvent.click(signInButton)
-    
+
     expect(mockSignIn).toHaveBeenCalledWith('eveonline', {
       callbackUrl: '/dashboard',
       redirect: true,
@@ -56,13 +66,19 @@ describe('SignInForm', () => {
   })
 
   it('uses custom callback URL when provided', async () => {
-    mockSignIn.mockResolvedValue({ error: undefined, status: 200, ok: true, url: null, code: '200' } as MockSignInResponse)
-    
+    mockSignIn.mockResolvedValue({
+      error: undefined,
+      status: 200,
+      ok: true,
+      url: null,
+      code: '200',
+    } as MockSignInResponse)
+
     render(<SignInForm callbackUrl="/custom-url" />)
-    
+
     const signInButton = screen.getByRole('button', { name: /sign in with eve online/i })
     fireEvent.click(signInButton)
-    
+
     expect(mockSignIn).toHaveBeenCalledWith('eveonline', {
       callbackUrl: '/custom-url',
       redirect: true,
@@ -71,7 +87,7 @@ describe('SignInForm', () => {
 
   it('displays required permissions section', () => {
     render(<SignInForm />)
-    
+
     expect(screen.getByText('Required Permissions')).toBeDefined()
     expect(screen.getByText('• Character information and skills')).toBeDefined()
     expect(screen.getByText('• Asset and wallet data')).toBeDefined()
@@ -79,7 +95,7 @@ describe('SignInForm', () => {
 
   it('handles unknown error types', () => {
     render(<SignInForm error="UnknownError" />)
-    
+
     expect(screen.getByText('An error occurred during sign in. Please try again.')).toBeDefined()
   })
 })
