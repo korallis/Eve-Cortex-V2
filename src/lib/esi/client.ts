@@ -428,7 +428,7 @@ export class ESIClient {
     }
 
     // Check if cache is still valid
-    if (response.headers.expires) {
+    if (response.headers?.expires) {
       const expires = new Date(response.headers.expires)
       if (expires > new Date()) {
         response.cached = true
