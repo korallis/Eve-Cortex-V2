@@ -321,11 +321,19 @@ When working on any task for the Eve-Cortex project:
    - ⚠️ VIOLATION: Skipping lint/type-check before implementation
 
 **Step 4: Execute Task with Full Context** ✅ REQUIRED
+   - FIRST read ALL context files to gain complete understanding:
+     - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/requirements.md`
+     - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/design.md`
+     - `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
+     - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/product.md`
+     - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/structure.md`
+     - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/tech.md`
+     - `/Users/lee/Documents/Eve-Cortex V2/.kiro/steering/terminal.md`
    - Work directly from `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
    - NEVER create local task lists or use TodoWrite tool
    - NEVER work from memory or assumptions
    - Follow existing code patterns and naming conventions
-   - ⚠️ VIOLATION: Using TodoWrite tool or working from memory
+   - ⚠️ VIOLATION: Using TodoWrite tool, working from memory, or not reading all context files
 
 **Step 5: Implementation Best Practices** ✅ REQUIRED
    - Always read existing similar files first to understand patterns
@@ -409,6 +417,7 @@ When working on any task for the Eve-Cortex project:
 🔴 **WORKFLOW VIOLATIONS:**
 - ❌ Using TodoWrite tool for task tracking
 - ❌ Creating local task lists
+- ❌ Not reading ALL context files from .kiro/specs/ and .kiro/steering/ directories
 - ❌ Working without reading all context files first
 - ❌ Not checking dev server status
 - ❌ Skipping any step in the mandatory workflow
