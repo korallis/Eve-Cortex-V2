@@ -335,12 +335,15 @@ When working on any task for the Eve-Cortex project:
    - Add comprehensive JSDoc comments for public APIs
    - ⚠️ VIOLATION: Not following existing patterns or missing TypeScript types
 
-**Step 6: Code Quality Validation** ✅ REQUIRED
-   - Run `npm run lint` after implementation
-   - Run `npm run type-check` to verify TypeScript compliance
-   - Fix any linting or type errors before proceeding
+**Step 6: Comprehensive Code Quality Validation** ✅ REQUIRED
+   - Run `npm run lint` after implementation - MUST show only warnings or pass
+   - Run `npm run type-check` to verify TypeScript compliance - MUST pass with no errors
+   - Run `npm test` to ensure all tests pass - MUST pass completely
+   - Run `npm run build` to verify production build works - MUST complete successfully
+   - Check for postgres.js type compatibility issues in database files
+   - Verify all TypeScript types are properly defined (no `any` or `unknown` without casting)
    - Ensure all new files follow project naming conventions
-   - ⚠️ VIOLATION: Proceeding with lint/type errors unfixed
+   - ⚠️ VIOLATION: Proceeding with lint/type errors, test failures, or build failures unfixed
 
 **Step 7: Update Progress in tasks.md** ✅ REQUIRED
    - Mark task as `[x]` completed directly in `/Users/lee/Documents/Eve-Cortex V2/.kiro/specs/eve-online-optimizer/tasks.md`
@@ -348,21 +351,23 @@ When working on any task for the Eve-Cortex project:
    - tasks.md is the SINGLE SOURCE OF TRUTH for progress
    - ⚠️ VIOLATION: Using any tracking system other than tasks.md
 
-**Step 8: Run Tests Before PR Creation** ✅ MANDATORY
-   - Run `npm test` to execute all tests
-   - Tests must PASS before creating PR
-   - Fix any test failures or configuration issues
-   - If Jest configuration errors exist, fix them immediately
-   - Only proceed to PR creation after all tests pass
-   - ⚠️ VIOLATION: Creating PR without running tests or when tests fail
+**Step 8: Final Quality Gate Validation** ✅ MANDATORY
+   - Run complete quality gate sequence: `npm run lint && npm run type-check && npm test && npm run build`
+   - ALL commands must pass completely before proceeding
+   - Fix any Jest configuration issues immediately (no `test:coverage` if it fails)
+   - Verify branch protection rules are configured: `npm run github:protection-status`
+   - Ensure CI/CD pipeline will succeed by checking all quality gates locally
+   - Only proceed to PR creation after ALL quality gates pass
+   - ⚠️ VIOLATION: Creating PR without all quality gates passing or CI/CD validation
 
-**Step 9: Create Pull Request** ✅ REQUIRED
-   - Once task is marked complete in tasks.md AND tests pass, create a PR
-   - Commit changes with descriptive commit message
+**Step 9: Create Pull Request with Auto-merge** ✅ REQUIRED
+   - Once task is marked complete in tasks.md AND ALL quality gates pass, create a PR
+   - Commit changes with descriptive commit message following format
    - Push to remote branch: `git push origin task/branch-name`
-   - Create PR with gh CLI: `gh pr create --title "feat: Task Name" --body "Description"`
-   - Each task gets its own separate PR
-   - ⚠️ VIOLATION: Not creating PR after task completion or reusing branches
+   - Create PR with auto-merge label: `gh pr create --title "feat: Task Name" --body "Description" --label "auto-merge"`
+   - Each task gets its own separate PR for clean Git history
+   - PR will auto-merge when CI/CD pipeline passes (since local validation ensures this)
+   - ⚠️ VIOLATION: Not creating PR after task completion, reusing branches, or missing auto-merge label
 
 ### 🚨 CRITICAL VIOLATIONS - IMMEDIATE TASK FAILURE 🚨
 
@@ -382,11 +387,15 @@ When working on any task for the Eve-Cortex project:
 - ❌ Skipping any step in the mandatory workflow
 - ❌ Completing steps out of order
 
-🔴 **TESTING VIOLATIONS:**
-- ❌ Creating PR without running tests first
+🔴 **TESTING AND QUALITY GATE VIOLATIONS:**
+- ❌ Creating PR without running complete quality gate sequence
 - ❌ Creating PR when tests are failing
+- ❌ Creating PR when TypeScript compilation fails
+- ❌ Creating PR when build fails
 - ❌ Not fixing Jest configuration errors
 - ❌ Skipping `npm test` before PR creation
+- ❌ Not verifying branch protection rules are configured
+- ❌ Using `test:coverage` when it fails instead of `test`
 
 🔴 **CODE QUALITY VIOLATIONS:**
 - ❌ Skipping lint/type-check before and after implementation
@@ -395,12 +404,17 @@ When working on any task for the Eve-Cortex project:
 - ❌ Not reading similar existing files first
 - ❌ Missing error handling or logging
 - ❌ Inconsistent naming conventions
+- ❌ Using `any` or `unknown` types without proper casting
+- ❌ Not checking for postgres.js type compatibility issues
+- ❌ Not verifying production build works before PR creation
 
 🔴 **TASK MANAGEMENT VIOLATIONS:**
 - ❌ Not creating separate PR for each task
 - ❌ Working from memory instead of tasks.md
 - ❌ Using any tracking system other than tasks.md
 - ❌ Not marking tasks as complete in tasks.md
+- ❌ Not adding auto-merge label to PRs
+- ❌ Not ensuring CI/CD pipeline compatibility before PR creation
 
 ### ✅ MANDATORY DEVELOPMENT PRACTICES - NO EXCEPTIONS
 
@@ -419,6 +433,32 @@ When working on any task for the Eve-Cortex project:
 6. `npm run lint` (after implementation) - REQUIRED
 7. `npm run type-check` (after implementation) - REQUIRED
 8. `npm test` (mandatory before PR) - REQUIRED
-9. Create PR on separate branch - REQUIRED
+9. `npm run build` (verify production build works) - REQUIRED
+10. `npm run github:protection-status` (verify branch protection) - REQUIRED
+11. Create PR with auto-merge label on separate branch - REQUIRED
 
-This comprehensive workflow ensures consistent, high-quality development that aligns with the Eve-Cortex project's goals, technical requirements, and brand identity while maintaining proper Git practices and code quality standards.
+**🔒 QUALITY GATE VALIDATION (MANDATORY):**
+- Complete quality gate sequence: `npm run lint && npm run type-check && npm test && npm run build`
+- ALL commands must pass with no errors (lint warnings acceptable)
+- Fix any TypeScript compilation errors immediately
+- Resolve any Jest configuration issues (use `test` not `test:coverage` if coverage fails)
+- Verify postgres.js type compatibility in database files
+- Ensure all types are properly defined with no unsafe `any` or `unknown` usage
+
+**🔒 CI/CD PIPELINE COMPATIBILITY (MANDATORY):**
+- Verify branch protection rules are configured: `npm run github:protection-status`
+- Ensure CI/CD workflow uses `npm test` not `npm run test:coverage`
+- Confirm all environment variables are properly set in CI/CD
+- Test that build works without coverage collection conflicts
+- Verify auto-merge labels are applied to PRs: `--label "auto-merge"`
+- Check that all status checks are configured in branch protection
+- Ensure PR will auto-merge when CI/CD passes (validated by local quality gates)
+
+**🔒 POSTGRESQL.JS TYPE SAFETY (MANDATORY):**
+- Cast `unknown` types to specific types: `value as string | number | boolean`
+- Use proper type assertions for SQL query parameters
+- Avoid raw `unknown` types in postgres.js template literals
+- Test all database operations with TypeScript strict mode
+- Ensure repository methods have proper return type annotations
+
+This comprehensive workflow ensures consistent, high-quality development that aligns with the Eve-Cortex project's goals, technical requirements, and brand identity while maintaining proper Git practices, code quality standards, and CI/CD pipeline compatibility.
