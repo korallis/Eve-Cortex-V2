@@ -360,11 +360,23 @@ When working on any task for the Eve-Cortex project:
    - Only proceed to PR creation after ALL quality gates pass
    - ⚠️ VIOLATION: Creating PR without all quality gates passing or CI/CD validation
 
-**Step 9: Create Pull Request with Auto-merge** ✅ REQUIRED
+**Step 8.5: Pre-PR CI/CD Validation** ✅ MANDATORY
+   - Verify GitHub workflow will trigger properly for PR events
+   - Check that branch has proper naming convention (task/* or feature/* or fix/*)
+   - Ensure PR will have required labels (auto-merge or claude-bot)
+   - Verify all environment variables are properly set for CI/CD
+   - Test that database and Redis services will be available in CI environment
+   - Confirm branch protection rules require 'CI/CD Pipeline' status check
+   - ⚠️ VIOLATION: Creating PR without verifying CI/CD compatibility
+
+**Step 9: Create Pull Request with Enhanced Auto-merge** ✅ REQUIRED
    - Once task is marked complete in tasks.md AND ALL quality gates pass, create a PR
    - Commit changes with descriptive commit message following format
    - Push to remote branch: `git push origin task/branch-name`
-   - Create PR with auto-merge label: `gh pr create --title "feat: Task Name" --body "Description" --label "auto-merge"`
+   - Create PR with enhanced command: `gh pr create --title "feat: Task Name" --body "Description" --label "auto-merge" --assignee "korallis"`
+   - Verify PR is created and not in draft mode
+   - Check that CI/CD Pipeline status check appears within 30 seconds
+   - If CI doesn't trigger, add comment to PR: `gh pr comment PR_NUMBER --body "Trigger CI"`
    - Each task gets its own separate PR for clean Git history
    - PR will auto-merge when CI/CD pipeline passes (since local validation ensures this)
    - ⚠️ VIOLATION: Not creating PR after task completion, reusing branches, or missing auto-merge label
